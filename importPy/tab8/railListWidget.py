@@ -159,8 +159,8 @@ class RailListWidget:
                 self.v_flag = IntVar()
                 self.v_flag.set(0)
                 v_flagInfo.append(self.v_flag)
-                self.flagChk = Checkbutton(self.flagFrame, text=flagInfoList[i][j], width=10, variable=self.v_flag, state="disabled", disabledforeground="black")
-                self.flagChk.grid(row=1, column=j, sticky=W, padx=3, pady=3)
+                self.flagChk = Checkbutton(self.flagFrame, text=flagInfoList[i][j], width=10, variable=self.v_flag, command=self.changeFlag)
+                self.flagChk.grid(row=1, column=j, sticky=W+E, padx=3, pady=3)
                 chkInfo.append(self.flagChk)
             self.v_flagInfoList.append(v_flagInfo)
             self.chkInfoList.append(chkInfo)
@@ -181,6 +181,17 @@ class RailListWidget:
         self.railFrame.pack(anchor=NW, padx=10, pady=10)
 
         self.searchRail(self.v_railNo.get())
+
+    def changeFlag(self):
+        for i in range(len(self.v_flagInfoList)):
+            res = 0
+            v_flagInfo = self.v_flagInfoList[i]
+            for j in range(len(v_flagInfo)):
+                if v_flagInfo[j].get() == 1:
+                    res += 2**(7-j)
+            strFlagHex = "0x{0:02x}".format(res)
+            self.v_flagHexList[i].set(strFlagHex)
+        
     def setRailInfo(self, cnt):
         self.varRailList = []
         children = self.railFrame.winfo_children()
