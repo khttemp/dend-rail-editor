@@ -20,6 +20,10 @@ from importPy.tab6.cpuWidget import *
 from importPy.tab7.comicScriptWidget import *
 from importPy.tab7.dosansenListWidget import *
 
+from importPy.tab8.railListWidget import *
+
+from importPy.tab9.elseList3Widget import *
+
 def tab1AllWidget(tab_one, decryptFile, reloadFunc):
     tab_one_frame = ttk.Frame(tab_one)
     tab_one_frame.pack(expand=True, fill=BOTH)
@@ -77,3 +81,10 @@ def tab6AllWidget(tab_6, decryptFile, reloadFunc):
 def tab7AllWidget(tab_7, decryptFile, reloadFunc):
     ComicScriptWidget(tab_7, decryptFile, decryptFile.comicScriptList, reloadFunc)
     DosansenListWidget(tab_7, decryptFile, decryptFile.dosansenList, reloadFunc)
+
+def tab8AllWidget(tab_8, decryptFile, reloadFunc):
+    frame = ScrollbarFrame(tab_8)
+    RailListWidget(frame.frame, decryptFile, decryptFile.railList, reloadFunc)
+
+def tab9AllWidget(tab_9, decryptFile, reloadFunc):
+    ElseList3Widget(tab_9, decryptFile, decryptFile.elseList3, reloadFunc)

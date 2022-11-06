@@ -41,7 +41,9 @@ def deleteAllWidget():
         tab_4,
         tab_5,
         tab_6,
-        tab_7
+        tab_7,
+        tab_8,
+        tab_9
     ]
 
     for tab in tabList:
@@ -58,6 +60,8 @@ def allTabWidget():
     tab5AllWidget(tab_5, decryptFile, reloadWidget)
     tab6AllWidget(tab_6, decryptFile, reloadWidget)
     tab7AllWidget(tab_7, decryptFile, reloadWidget)
+    tab8AllWidget(tab_8, decryptFile, reloadWidget)
+    tab9AllWidget(tab_9, decryptFile, reloadWidget)
 
 def reloadWidget():
     global decryptFile
@@ -110,5 +114,9 @@ tab_6 = ttk.Frame(notebook)
 notebook.add(tab_6, text="CPU情報")
 tab_7 = ttk.Frame(notebook)
 notebook.add(tab_7, text="Comic Script、土讃線")
+tab_8 = ttk.Frame(notebook)
+notebook.add(tab_8, text="レール情報")
+tab_9 = ttk.Frame(notebook)
+notebook.add(tab_9, text="要素3")
 
 root.mainloop()

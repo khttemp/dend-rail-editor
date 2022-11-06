@@ -24,6 +24,8 @@ class RailDecrypt:
         self.elseList2 = []
         self.comicScriptList = []
         self.dosansenList = []
+        self.railList = []
+        self.elseList3 = []
         self.error = ""
 
     def open(self):
@@ -42,6 +44,7 @@ class RailDecrypt:
         f.write(self.error)
         f.close()
     def decrypt(self):
+        self.ver = ""
         self.musicCnt = 0
         self.trainCnt = 0
         self.trainList = []
@@ -59,16 +62,20 @@ class RailDecrypt:
         self.elseList2 = []
         self.comicScriptList = []
         self.dosansenList = []
+        self.railList = []
+        self.elseList3 = []
         
         index = 16
         readFlag = False
         
-        header = self.byteArr[0:index]
-        if header != b'DEND_MAP_VER0300' and header != b'DEND_MAP_VER0400':
+        header = self.byteArr[0:index].decode("shift-jis")
+        if header != "DEND_MAP_VER0300" and header != "DEND_MAP_VER0400":
             raise Exception
 
-        if header == b'DEND_MAP_VER0400':
+        if header == "DEND_MAP_VER0400":
             readFlag = True
+
+        self.ver = header
 
         #使う音楽(ダミーデータ?)
         self.musicIdx = index
@@ -417,98 +424,116 @@ class RailDecrypt:
         w.write("next_rail,next_no,prev_rail,prev_no,\n")
         mapCnt = struct.unpack("<h", self.byteArr[index:index+2])[0]
         index += 2
-
+        
         for i in range(mapCnt):
+            railInfo = []
+            railInfo.append(i)
+            
             prev_rail = struct.unpack("<h", self.byteArr[index:index+2])[0]
+            railInfo.append(prev_rail)
             index += 2
             block = struct.unpack("<b", self.byteArr[index].to_bytes(1, "little"))[0]
+            railInfo.append(block)
             index += 1
 
             w.write("{0},{1},{2},".format(i, prev_rail, block))
 
-            #vector
-            xyz = []
             for j in range(3):
                 f = struct.unpack("<f", self.byteArr[index:index+4])[0]
-                xyz.append(f)
+                railInfo.append(f)
                 index += 4
                 w.write("{0},".format(f))
 
-            mdl_no = struct.unpack("<b", self.byteArr[index].to_bytes(1, "little"))[0]
+            mdl_no = struct.unpack("<B", self.byteArr[index].to_bytes(1, "little"))[0]
+            railInfo.append(mdl_no)
             index += 1
             w.write("{0},".format(mdl_no))
 
             mdl_flg = struct.unpack("<b", self.byteArr[index].to_bytes(1, "little"))[0]
+            railInfo.append(mdl_flg)
             index += 1
             w.write("{0},".format(mdl_flg))
 
             mdl_kasenchu = struct.unpack("<b", self.byteArr[index].to_bytes(1, "little"))[0]
+            railInfo.append(mdl_kasenchu)
             index += 1
             w.write("{0},".format(mdl_kasenchu))
 
             per = struct.unpack("<f", self.byteArr[index:index+4])[0]
+            railInfo.append(per)
             index += 4
             w.write("{0},".format(per))
             
-            #flg
-            flg = []
             for j in range(4):
                 flag = self.byteArr[index]
-                flg.append(flag)
+                railInfo.append(flag)
                 index += 1
                 w.write("0x{:02x},".format(flag))
 
-            #rail_data
             rail_data = self.byteArr[index]
+            railInfo.append(rail_data)
             w.write("{0},".format(rail_data))
             index += 1
 
             for j in range(rail_data):
                 if readFlag:
                     next_rail = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                    railInfo.append(next_rail)
                     index += 2
                     next_no = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                    railInfo.append(next_no)
                     index += 2
                     prev_rail = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                    railInfo.append(prev_rail)
                     index += 2
                     prev_no = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                    railInfo.append(prev_no)
                     index += 2
                     w.write("{0},{1},{2},{3},".format(next_rail, next_no, prev_rail, prev_no))
                     
                 next_rail = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                railInfo.append(next_rail)
                 index += 2
                 next_no = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                railInfo.append(next_no)
                 index += 2
                 prev_rail = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                railInfo.append(prev_rail)
                 index += 2
                 prev_no = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                railInfo.append(prev_no)
                 index += 2
                 w.write("{0},{1},{2},{3},".format(next_rail, next_no, prev_rail, prev_no))
+            self.railList.append(railInfo)
             w.write("\n")
         w.close()
 
         print("Map End!")
-        print(hex(index))
         ##########unknown
+        self.else3Idx = index
+        print(hex(index))
         cnt = struct.unpack("<h", self.byteArr[index:index+2])[0]
         index += 2
         for i in range(cnt):
+            else3Info = []
             railNo = struct.unpack("<h", self.byteArr[index:index+2])[0]
+            else3Info.append(railNo)
             index += 2
-            print(railNo, end=", ")
+
             endcnt = self.byteArr[index]
+            else3Info.append(endcnt)
             index += 1
-            print(endcnt, end=", ")
             for j in range(endcnt):
                 for k in range(8):
                     temp = self.byteArr[index]
+                    else3Info.append(temp)
                     index += 1
-                    print(temp, end=", ")
-            print()
+            self.elseList3.append(else3Info)
 
         index += 2
         ##########unknown
 
+        self.ambIdx = index
         print("amb data...")
         ambcnt = struct.unpack("<h", self.byteArr[index:index+2])[0]
         index += 2
@@ -1150,6 +1175,71 @@ class RailDecrypt:
                         newByteArr.extend(tempH)
 
             index = self.railIdx
+            newByteArr.extend(self.byteArr[index:])
+            
+            self.save(newByteArr)
+            return True
+        except Exception as e:
+            self.error = traceback.format_exc()
+            return False
+
+    def saveElse3Cnt(self, cnt):
+        try:
+            index = self.else3Idx
+            else3Cnt = self.byteArr[index]
+            index += 2
+
+            if cnt > else3Cnt:
+                index = self.ambIdx - 2
+                newByteArr = self.byteArr[0:index]
+
+                for i in range(cnt - else3Cnt):
+                    tempH1 = struct.pack("<h", 1)
+                    newByteArr.extend(tempH1)
+                    newByteArr.append(1)
+                    for j in range(8):
+                        newByteArr.append(0)
+            else:
+                for i in range(cnt):
+                    index += 2
+                    index += 1
+                    for j in range(8):
+                        index += 1
+                newByteArr = self.byteArr[0:index]
+
+            index = self.ambIdx - 2
+            newByteArr.extend(self.byteArr[index:])
+            cntH = struct.pack("<h", cnt)
+            newByteArr[self.else3Idx] = cntH[0]
+            newByteArr[self.else3Idx+1] = cntH[1]
+            
+            self.save(newByteArr)
+            return True
+        except Exception as e:
+            self.error = traceback.format_exc()
+            return False
+
+    def saveElse3List(self, valList):
+        try:
+            index = self.else3Idx
+            else3Cnt = self.byteArr[index]
+            index += 2
+
+            newByteArr = self.byteArr[0:index]
+            for i in range(len(valList)):
+                valInfo = valList[i]
+                railNoH = struct.pack("<h", valInfo[0])
+                newByteArr.extend(railNoH)
+                newByteArr.append(valInfo[1])
+                for j in range(valInfo[1]):
+                    if len(valInfo)-2 < valInfo[1]*8:
+                        for k in range(8):
+                            newByteArr.append(0)
+                    else:
+                        for k in range(8):
+                            newByteArr.append(valInfo[2+8*j+k])
+
+            index = self.ambIdx - 2
             newByteArr.extend(self.byteArr[index:])
             
             self.save(newByteArr)

@@ -135,8 +135,8 @@ class EditEleList2Widget(sd.Dialog):
 
         else2InfoLbList = ["e1", "e2", "f1", "f2", "e3", "e4", "e5"]
         for i in range(len(self.else2Info)):
-            self.stationLb = ttk.Label(master, text=else2InfoLbList[i], font=("", 14))
-            self.stationLb.grid(row=i, column=0, sticky=W+E)
+            self.else2Lb = ttk.Label(master, text=else2InfoLbList[i], font=("", 14))
+            self.else2Lb.grid(row=i, column=0, sticky=W+E)
             if i in [2, 3]:
                 self.varElse2 = DoubleVar()
                 self.varElse2.set(round(float(self.else2Info[i]), 3))
