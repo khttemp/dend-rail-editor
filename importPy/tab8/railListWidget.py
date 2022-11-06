@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
+from tkinter import filedialog as fd
 
 class RailListWidget:
     def __init__(self, frame, decryptFile, railList, reloadFunc):
@@ -24,6 +25,9 @@ class RailListWidget:
         self.railNoEt.grid(row=0, column=1, sticky=W+E, padx=10)
         self.searchBtn = ttk.Button(self.railNoFrame, text="照会", command=lambda: self.searchRail(self.v_railNo.get()))
         self.searchBtn.grid(row=0, column=2, sticky=W+E, padx=30)
+
+        self.csvSaveBtn = ttk.Button(self.railNoFrame, text="CSVで上書きする", command=self.saveCsv)
+        self.csvSaveBtn.grid(row=0, column=3, sticky=W+E, padx=30)
 
         ###
         self.sidePackFrame = ttk.Frame(self.frame)
@@ -94,12 +98,49 @@ class RailListWidget:
         self.flagFrameLf.pack(anchor=NW, padx=30, pady=15)
 
         flagInfoList = [
-            ["フラグ1", "フラグ2", "フラグ3", "フラグ4", "フラグ5", "フラグ6", "フラグ7", "フラグ8"],
-            ["フラグ1", "フラグ2", "フラグ3", "フラグ4", "フラグ5", "フラグ6", "フラグ7", "フラグ8"],
-            ["フラグ1", "フラグ2", "フラグ3", "フラグ4", "フラグ5", "フラグ6", "フラグ7", "フラグ8"],
-            ["フラグ1", "フラグ2", "フラグ3", "フラグ4", "フラグ5", "フラグ6", "フラグ7", "フラグ8"]
+            [
+                "踏み切り\n通過中の音",
+                "複線ドリフトで\n飛ぶ",
+                "手前位置に\n180度回転",
+                "LAST_POS",
+                "LAST01",
+                "LAST02",
+                "橋\n通過中の音",
+                "Noドリフト"
+            ],
+            [
+                "クラッシュ時\nカメラ位置を高く",
+                "他のレールも\nドリフト対象",
+                "フラグ3",
+                "フラグ4",
+                "CPU振り子車両\n振り子のみ",
+                "CPU\n片輪ドリフト\n戻し",
+                "CPU\n右片輪ドリフト",
+                "CPU\n左片輪ドリフト"
+            ],
+            [
+                "片輪ドリフト時\n飛ぶ",
+                "右側線路\n片輪ドリフト時\n飛ぶ",
+                "左側線路\n片輪ドリフト時\n飛ぶ",
+                "レール非表示",
+                "左入力で\n土讃線",
+                "右入力で\n土讃線",
+                "右側に\nレールガード",
+                "左側に\nレールガード"
+            ],
+            [
+                "Disabled\nレール",
+                "CPU\n転線",
+                "L_RUN",
+                "R_RUN",
+                "フラグ5",
+                "CPU\nドリフト\n戻し",
+                "CPU\n右ドリフト",
+                "CPU\n左ドリフト"
+            ]
         ]
 
+        self.v_flagHexList = []
         self.v_flagInfoList = []
         self.chkInfoList = []
         
@@ -108,12 +149,18 @@ class RailListWidget:
             chkInfo = []
             self.flagFrame = ttk.Frame(self.flagFrameLf)
             self.flagFrame.pack(anchor=NW, pady=3)
+
+            self.v_flagHex = StringVar()
+            self.v_flagHex.set("0x00")
+            self.v_flagHexList.append(self.v_flagHex)
+            self.flagHexLb = ttk.Label(self.flagFrame, textvariable=self.v_flagHex, font=("", 14))
+            self.flagHexLb.grid(row=0, column=0, sticky=W+E, padx=3, pady=3)
             for j in range(len(flagInfoList[i])):
                 self.v_flag = IntVar()
                 self.v_flag.set(0)
                 v_flagInfo.append(self.v_flag)
-                self.flagChk = Checkbutton(self.flagFrame, text=flagInfoList[i][j], variable=self.v_flag, state="disabled", disabledforeground="black")
-                self.flagChk.grid(row=0, column=j, sticky=W+E, padx=10, pady=10)
+                self.flagChk = Checkbutton(self.flagFrame, text=flagInfoList[i][j], width=10, variable=self.v_flag, state="disabled", disabledforeground="black")
+                self.flagChk.grid(row=1, column=j, sticky=W, padx=3, pady=3)
                 chkInfo.append(self.flagChk)
             self.v_flagInfoList.append(v_flagInfo)
             self.chkInfoList.append(chkInfo)
@@ -129,9 +176,6 @@ class RailListWidget:
         self.v_railDataCnt = IntVar()
         self.railDataCntEt = ttk.Entry(self.railFrameCntFrame, textvariable=self.v_railDataCnt, font=("", 14), width=7, justify="center", state="readonly")
         self.railDataCntEt.grid(row=0, column=1, sticky=W+E, padx=10, pady=10)
-
-        self.changeRailBtn = ttk.Button(self.railFrameCntFrame, text="本数を変える", state="disabled", command=lambda :self.setRailInfo(self.v_railDataCnt.get()))
-        self.changeRailBtn.grid(row=0, column=2, sticky=W+E, padx=10)
     
         self.railFrame = ttk.Frame(self.railFrameLf)
         self.railFrame.pack(anchor=NW, padx=10, pady=10)
@@ -186,6 +230,8 @@ class RailListWidget:
         self.v_per.set(round(railInfo[9], 4))
 
         for i in range(4):
+            strFlagHex = "0x{0:02x}".format(railInfo[10+i])
+            self.v_flagHexList[i].set(strFlagHex)
             for j in range(8):
                 if railInfo[10+i] & (2**(7-j)) == 0:
                     self.v_flagInfoList[i][j].set(0)
@@ -196,3 +242,85 @@ class RailListWidget:
         self.setRailInfo(railInfo[14])
         for i in range(len(self.varRailList)):
             self.varRailList[i].set(railInfo[15+i])
+
+    def saveCsv(self):
+        errorMsg = "CSVで上書きが失敗しました。\n権限問題の可能性があります。"
+        file_path = fd.askopenfilename(defaultextension='csv', filetypes=[("レールデータCSV", "*.csv")])
+        if not file_path:
+            return
+        try:
+            f = open(file_path)
+            csvLines = f.readlines()
+            f.close()
+        except:
+            errorMsg = "読み込み失敗しました。"
+            mb.showerror(title="読み込みエラー", message=errorMsg)
+            return
+
+        try:
+            csvLines.pop(0)
+            railList = []
+            count = 2
+            for csv in csvLines:
+                railInfo = []
+                csv = csv.strip()
+                arr = csv.split(",")
+                if len(arr) < 15:
+                    raise Exception
+
+                prev_rail = int(arr[1])
+                railInfo.append(prev_rail)
+
+                block = int(arr[2])
+                railInfo.append(block)
+
+                for i in range(3):
+                    dirF = float(arr[3+i])
+                    railInfo.append(dirF)
+
+                mdl_no = int(arr[6])
+                railInfo.append(mdl_no)
+
+                kasen = int(arr[7])
+                railInfo.append(kasen)
+
+                kasenchu = int(arr[8])
+                railInfo.append(kasenchu)
+
+                per = float(arr[9])
+                railInfo.append(per)
+
+                for i in range(4):
+                    flag = int(arr[10+i], 16)
+                    railInfo.append(flag)
+
+                rail_data = int(arr[14])
+                railInfo.append(rail_data)
+
+                readCount = 4
+                if self.decryptFile.ver == "DEND_MAP_VER0400":
+                    readCount = 8
+                    
+                for i in range(rail_data * readCount):
+                    rail = int(arr[15+i])
+                    railInfo.append(rail)
+
+                railList.append(railInfo)
+                count += 1
+
+            count -= 3
+            msg = "{0}行のデータを読み込みしました。\n上書きしますか？".format(count)
+            result = mb.askokcancel(title="警告", message=msg, icon="warning")
+
+            if result:
+                if not self.decryptFile.saveRailCsv(railList):
+                    self.decryptFile.printError()
+                    mb.showerror(title="エラー", message="予想外のエラーが発生しました")
+                    return
+                mb.showinfo(title="成功", message="レール情報を修正しました")
+                self.reloadFunc()
+            
+        except:
+            errorMsg = "{0}行のデータを読み込み失敗しました。".format(count)
+            mb.showerror(title="読み込みエラー", message=errorMsg)
+            return
