@@ -24,6 +24,8 @@ from importPy.tab8.railListWidget import *
 
 from importPy.tab9.elseList3Widget import *
 
+from importPy.tab10.ambListWidget import *
+
 def tab1AllWidget(tab_one, decryptFile, reloadFunc):
     tab_one_frame = ttk.Frame(tab_one)
     tab_one_frame.pack(expand=True, fill=BOTH)
@@ -88,3 +90,7 @@ def tab8AllWidget(tab_8, decryptFile, reloadFunc):
 
 def tab9AllWidget(tab_9, decryptFile, reloadFunc):
     ElseList3Widget(tab_9, decryptFile, decryptFile.elseList3, reloadFunc)
+
+def tab10AllWidget(tab_10, decryptFile, reloadFunc):
+    frame = ScrollbarFrame(tab_10)
+    AmbListWidget(frame.frame, decryptFile, decryptFile.ambList, reloadFunc)

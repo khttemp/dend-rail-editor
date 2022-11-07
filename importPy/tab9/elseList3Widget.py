@@ -79,7 +79,6 @@ class ElseList3Widget:
         if result.reloadFlag:
             for j in range(2):
                 self.else3List[i][j] = result.resultValueList[j]
-            print(self.else3List[i])
             if not self.decryptFile.saveElse3List(self.else3List):
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")

@@ -26,6 +26,7 @@ class RailDecrypt:
         self.dosansenList = []
         self.railList = []
         self.elseList3 = []
+        self.ambList = []
         self.error = ""
 
     def open(self):
@@ -64,6 +65,7 @@ class RailDecrypt:
         self.dosansenList = []
         self.railList = []
         self.elseList3 = []
+        self.ambList = []
         
         index = 16
         readFlag = False
@@ -414,7 +416,6 @@ class RailDecrypt:
 
         self.railIdx = index
         #Map
-        print("Read Map Data...")
         writeFlag = True
         try:
             w = open(self.filename + ".csv", "w")
@@ -525,7 +526,6 @@ class RailDecrypt:
         if writeFlag:
             w.close()
 
-        print("Map End!")
         ##########unknown
         self.else3Idx = index
         cnt = struct.unpack("<h", self.byteArr[index:index+2])[0]
@@ -550,81 +550,137 @@ class RailDecrypt:
         ##########unknown
 
         self.ambIdx = index
-        print("amb data...")
         ambcnt = struct.unpack("<h", self.byteArr[index:index+2])[0]
         index += 2
-        w = open(self.filename + "_amb.csv", "w")
-        w.write("index,const0,const1000,")
-        w.write("rail_no,rail_pos,")
-        w.write("base_pos_x,base_pos_y,base_pos_z,")
-        w.write("base_dir_x,base_dir_y,base_dir_z,")
-        w.write("ele1,ele2(child count),")
-        w.write("mdl_no,")
-        w.write("pos_x,pos_y,pos_z,")
-        w.write("dir_x,dir_y,dir_z,")
-        w.write("dir_x2,dir_y2,dir_z2,")
-        w.write("per,\n")
+        writeFlag = True
+        try:
+            w = open(self.filename + "_amb.csv", "w")
+            w.write("index,const0,const1000,")
+            w.write("rail_no,rail_pos,")
+            w.write("base_pos_x,base_pos_y,base_pos_z,")
+            w.write("base_dir_x,base_dir_y,base_dir_z,")
+            w.write("priority,fog|child count,")
+            w.write("mdl_no,")
+            w.write("pos_x,pos_y,pos_z,")
+            w.write("dir_x,dir_y,dir_z,")
+            w.write("dir_x2,dir_y2,dir_z2,")
+            w.write("per,\n")
+        except PermissionError:
+            writeFlag = False
+            
         for i in range(ambcnt):
+            ambInfo = []
             # index
-            w.write("{0},".format(i))
+            if writeFlag:
+                w.write("{0},".format(i))
 
             # 0
             temp = self.byteArr[index]
+            ambInfo.append(temp)
             index += 1
-            w.write("{0},".format(temp))
+            if writeFlag:
+                w.write("{0},".format(temp))
 
             # 1000
             temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+            ambInfo.append(temp)
             index += 4
-            w.write("{0},".format(temp))
+            if writeFlag:
+                w.write("{0},".format(temp))
 
             # RailNo, RailPos
             for j in range(2):
                 temp = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                ambInfo.append(temp)
                 index += 2
-                w.write("{0},".format(temp))
+                if writeFlag:
+                    w.write("{0},".format(temp))
 
             # base pos_xyz base rot_xyz
             for j in range(6):
                 temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+                ambInfo.append(temp)
                 index += 4
-                w.write("{0},".format(temp))
-
-            temp = self.byteArr[index]
-            index += 1
-            w.write("{0},".format(temp))
-            temp = self.byteArr[index]
-            index += 1
-            w.write("{0},".format(temp))
-
-            temp = struct.unpack("<h", self.byteArr[index:index+2])[0]
-            index += 2
-            w.write("{0},".format(temp))
-
-            for j in range(10):
-                temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
-                index += 4
-                w.write("{0},".format(temp))
-                
-            w.write("\n")
-            w.write(","*12)
-            
-            cnta = self.byteArr[index]
-            index += 1
-            w.write("{0},".format(cnta))
-            for j in range(cnta):
-                temp = struct.unpack("<h", self.byteArr[index:index+2])[0]
-                index += 2
-                w.write("{0},".format(temp))
-
-                for k in range(10):
-                    temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
-                    index += 4
+                if writeFlag:
                     w.write("{0},".format(temp))
+
+            temp = self.byteArr[index]
+            ambInfo.append(temp)
+            index += 1
+            if writeFlag:
+                w.write("{0},".format(temp))
+            
+            temp = self.byteArr[index]
+            ambInfo.append(temp)
+            index += 1
+            if writeFlag:
+                w.write("{0},".format(temp))
+
+            #mdl_no
+            temp = struct.unpack("<h", self.byteArr[index:index+2])[0]
+            ambInfo.append(temp)
+            index += 2
+            if writeFlag:
+                w.write("{0},".format(temp))
+
+            #pos xyz, dir xyz dir2 xyz
+            for j in range(9):
+                temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+                ambInfo.append(temp)
+                index += 4
+                if writeFlag:
+                    w.write("{0},".format(temp))
+
+            #per
+            temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+            ambInfo.append(temp)
+            index += 4
+            if writeFlag:
+                w.write("{0},".format(temp))
+
+            if writeFlag:
                 w.write("\n")
-                w.write(","*13)
-            w.write("\n")
-        w.close()
+                w.write(","*12)
+
+            #AMB子mdl_no数
+            cnta = self.byteArr[index]
+            ambInfo.append(cnta)
+            index += 1
+            if writeFlag:
+                w.write("{0},".format(cnta))
+
+            for j in range(cnta):
+                #mdl_no
+                temp = struct.unpack("<h", self.byteArr[index:index+2])[0]
+                ambInfo.append(temp)
+                index += 2
+                if writeFlag:
+                    w.write("{0},".format(temp))
+
+                #pos xyz, dir xyz, dir2 xyz
+                for k in range(9):
+                    temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+                    ambInfo.append(temp)
+                    index += 4
+                    if writeFlag:
+                        w.write("{0},".format(temp))
+
+                #per
+                temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
+                ambInfo.append(temp)
+                index += 4
+                if writeFlag:
+                    w.write("{0},".format(temp))
+
+                if writeFlag:
+                    if j < (cnta-1):
+                        w.write("\n")
+                        w.write(","*13)
+            self.ambList.append(ambInfo)
+            if writeFlag:
+                w.write("\n")
+        if writeFlag:
+            w.close()
 
         return True
     def saveMusic(self, cnt):
@@ -875,7 +931,6 @@ class RailDecrypt:
             index += 1
 
             newByteArr = self.byteArr[0:index]
-            print(valList)
             for i in range(len(valList)):
                 valInfo = valList[i]
                 for j in range(len(valInfo)):
@@ -1334,6 +1389,63 @@ class RailDecrypt:
 
             index = self.ambIdx - 2
             newByteArr.extend(self.byteArr[index:])
+            
+            self.save(newByteArr)
+            return True
+        except Exception as e:
+            self.error = traceback.format_exc()
+            return False
+
+    def saveAmbCsv(self, ambList):
+        try:
+            index = self.ambIdx
+            newByteArr = self.byteArr[0:index]
+
+            ambCnt = len(ambList)
+            ambCntH = struct.pack("<h", ambCnt)
+            newByteArr.extend(ambCntH)
+            
+            for i in range(len(ambList)):
+                ambInfo = ambList[i]
+
+                const0 = ambInfo[0]
+                newByteArr.append(const0)
+
+                length = struct.pack("<f", ambInfo[1])
+                newByteArr.extend(length)
+
+                railNoH = struct.pack("<h", ambInfo[2])
+                newByteArr.extend(railNoH)
+                railPosH = struct.pack("<h", ambInfo[3])
+                newByteArr.extend(railPosH)
+
+                for j in range(6):
+                    tempF = struct.pack("<f", ambInfo[4+j])
+                    newByteArr.extend(tempF)
+
+                priority = ambInfo[10]
+                newByteArr.append(priority)
+
+                fog = ambInfo[11]
+                newByteArr.append(fog)
+
+                mdlNoH = struct.pack("<h", ambInfo[12])
+                newByteArr.extend(mdlNoH)
+
+                for j in range(10):
+                    tempF = struct.pack("<f", ambInfo[13+j])
+                    newByteArr.extend(tempF)
+
+                ambChildData = ambInfo[23]
+                newByteArr.append(ambChildData)
+
+                for j in range(ambChildData):
+                    mdlNoH = struct.pack("<h", ambInfo[11*j+24])
+                    newByteArr.extend(mdlNoH)
+
+                    for k in range(10):
+                        tempF = struct.pack("<f", ambInfo[11*j+25+k])
+                        newByteArr.extend(tempF)
             
             self.save(newByteArr)
             return True

@@ -11,6 +11,7 @@ class RailListWidget:
         self.smfList = [smfInfo[0] for smfInfo in decryptFile.smfList]
         self.railList = railList
         self.varRailList = []
+        self.varRevRailList = []
         self.reloadFunc = reloadFunc
 
         self.smfList.extend(["モデル設定通り", "なし"])
@@ -180,6 +181,9 @@ class RailListWidget:
         self.railFrame = ttk.Frame(self.railFrameLf)
         self.railFrame.pack(anchor=NW, padx=10, pady=10)
 
+        self.revRailFrame = ttk.Frame(self.railFrameLf)
+        self.revRailFrame.pack(anchor=NW, padx=10, pady=10)
+
         self.searchRail(self.v_railNo.get())
 
     def changeFlag(self):
@@ -199,7 +203,7 @@ class RailListWidget:
             child.destroy()
             
         for i in range(cnt):
-            self.nextRailLb = ttk.Label(self.railFrame, text="次レール", font=("", 14))
+            self.nextRailLb = ttk.Label(self.railFrame, text="次レール", width=11, font=("", 14))
             self.nextRailLb.grid(row=i, column=0, sticky=W+E, padx=10, pady=5)
             self.v_nextRailNo = IntVar()
             self.varRailList.append(self.v_nextRailNo)
@@ -210,7 +214,7 @@ class RailListWidget:
             self.nextRailPosEt = ttk.Entry(self.railFrame, textvariable=self.v_nextRailPos, font=("", 14), width=7, justify="center", state="readonly")
             self.nextRailPosEt.grid(row=i, column=2, sticky=W+E, pady=5)
 
-            self.prevRailLb = ttk.Label(self.railFrame, text="前レール", font=("", 14))
+            self.prevRailLb = ttk.Label(self.railFrame, text="前レール", width=11, font=("", 14))
             self.prevRailLb.grid(row=i, column=3, sticky=W+E, padx=10, pady=5)
             self.v_prevRailNo = IntVar()
             self.varRailList.append(self.v_prevRailNo)
@@ -220,6 +224,35 @@ class RailListWidget:
             self.varRailList.append(self.v_prevRailPos)
             self.prevRailPosEt = ttk.Entry(self.railFrame, textvariable=self.v_prevRailPos, font=("", 14), width=7, justify="center", state="readonly")
             self.prevRailPosEt.grid(row=i, column=5, sticky=W+E, pady=5)
+
+    def setRevRailInfo(self, cnt):
+        self.varRevRailList = []
+        children = self.revRailFrame.winfo_children()
+        for child in children:
+            child.destroy()
+            
+        for i in range(cnt):
+            self.revNextRailLb = ttk.Label(self.revRailFrame, text="次レール(rev)", font=("", 14))
+            self.revNextRailLb.grid(row=i, column=0, sticky=W+E, padx=10, pady=5)
+            self.v_revNextRailNo = IntVar()
+            self.varRevRailList.append(self.v_revNextRailNo)
+            self.revNextRailNoEt = ttk.Entry(self.revRailFrame, textvariable=self.v_revNextRailNo, font=("", 14), width=7, justify="center", state="readonly")
+            self.revNextRailNoEt.grid(row=i, column=1, sticky=W+E, pady=5)
+            self.v_revNextRailPos = IntVar()
+            self.varRevRailList.append(self.v_revNextRailPos)
+            self.revNextRailPosEt = ttk.Entry(self.revRailFrame, textvariable=self.v_revNextRailPos, font=("", 14), width=7, justify="center", state="readonly")
+            self.revNextRailPosEt.grid(row=i, column=2, sticky=W+E, pady=5)
+
+            self.revPrevRailLb = ttk.Label(self.revRailFrame, text="前レール(rev)", font=("", 14))
+            self.revPrevRailLb.grid(row=i, column=3, sticky=W+E, padx=10, pady=5)
+            self.v_revPrevRailNo = IntVar()
+            self.varRevRailList.append(self.v_revPrevRailNo)
+            self.revPrevRailNoEt = ttk.Entry(self.revRailFrame, textvariable=self.v_revPrevRailNo, font=("", 14), width=7, justify="center", state="readonly")
+            self.revPrevRailNoEt.grid(row=i, column=4, sticky=W+E, pady=5)
+            self.v_revPrevRailPos = IntVar()
+            self.varRevRailList.append(self.v_revPrevRailPos)
+            self.revPrevRailPosEt = ttk.Entry(self.revRailFrame, textvariable=self.v_revPrevRailPos, font=("", 14), width=7, justify="center", state="readonly")
+            self.revPrevRailPosEt.grid(row=i, column=5, sticky=W+E, pady=5)
 
     def searchRail(self, railNo):
         if railNo < 0 or railNo >= len(self.railList):
@@ -253,6 +286,12 @@ class RailListWidget:
         self.setRailInfo(railInfo[14])
         for i in range(len(self.varRailList)):
             self.varRailList[i].set(railInfo[15+i])
+
+        if self.decryptFile.ver == "DEND_MAP_VER0400":
+            railCount = railInfo[14]
+            self.setRevRailInfo(railCount)
+            for i in range(len(self.varRevRailList)):
+                self.varRevRailList[i].set(railInfo[15+railCount*4+i])
 
     def saveCsv(self):
         errorMsg = "CSVで上書きが失敗しました。\n権限問題の可能性があります。"
