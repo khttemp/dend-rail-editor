@@ -26,8 +26,8 @@ from importPy.tab9.elseList3Widget import *
 
 from importPy.tab10.ambListWidget import *
 
-def tab1AllWidget(tab_one, decryptFile, reloadFunc):
-    tab_one_frame = ttk.Frame(tab_one)
+def tab1AllWidget(tabFrame, decryptFile, reloadFunc):
+    tab_one_frame = ttk.Frame(tabFrame)
     tab_one_frame.pack(expand=True, fill=BOTH)
     frame = ScrollbarFrame(tab_one_frame)
 
@@ -49,8 +49,8 @@ def tab1AllWidget(tab_one, decryptFile, reloadFunc):
     railPos3Frame.grid(row=2, column=0, pady=3)
     RailPosWidget(railPos3Frame, "試運転、二人バトル配置", 2, decryptFile, decryptFile.trainList3, reloadFunc)
 
-def tab2AllWidget(tab_two, decryptFile, reloadFunc):
-    tab_two_frame = ttk.Frame(tab_two)
+def tab2AllWidget(tabFrame, decryptFile, reloadFunc):
+    tab_two_frame = ttk.Frame(tabFrame)
     tab_two_frame.pack(expand=True, fill=BOTH)
     frame = ScrollbarFrame(tab_two_frame)
 
@@ -68,29 +68,29 @@ def tab2AllWidget(tab_two, decryptFile, reloadFunc):
     SimpleListWidget(simpleListFrame2, "ベースbin情報", decryptFile, decryptFile.baseBinList, decryptFile.binIdx, 1, reloadFunc)
     BinAnimeListWidget(simpleListFrame2, decryptFile, decryptFile.binAnimeList, reloadFunc)
 
-def tab3AllWidget(tab_3, decryptFile, reloadFunc):
-    SmfListWidget(tab_3, decryptFile, decryptFile.smfList, 20, reloadFunc)
+def tab3AllWidget(tabFrame, decryptFile, reloadFunc):
+    SmfListWidget(tabFrame, decryptFile, decryptFile.smfList, 20, reloadFunc)
 
-def tab4AllWidget(tab_4, decryptFile, reloadFunc):
-    StationNameWidget(tab_4, decryptFile, decryptFile.stationNameList, 20, reloadFunc)
+def tab4AllWidget(tabFrame, decryptFile, reloadFunc):
+    StationNameWidget(tabFrame, decryptFile, decryptFile.stationNameList, 20, reloadFunc)
 
-def tab5AllWidget(tab_5, decryptFile, reloadFunc):
-    EleList2Widget(tab_5, decryptFile, decryptFile.elseList2, reloadFunc)
+def tab5AllWidget(tabFrame, decryptFile, reloadFunc):
+    EleList2Widget(tabFrame, decryptFile, decryptFile.elseList2, reloadFunc)
 
-def tab6AllWidget(tab_6, decryptFile, reloadFunc):
-    CpuWidget(tab_6, decryptFile, decryptFile.cpuList, 20, reloadFunc)
+def tab6AllWidget(tabFrame, decryptFile, reloadFunc):
+    CpuWidget(tabFrame, decryptFile, decryptFile.cpuList, 20, reloadFunc)
 
-def tab7AllWidget(tab_7, decryptFile, reloadFunc):
-    ComicScriptWidget(tab_7, decryptFile, decryptFile.comicScriptList, reloadFunc)
-    DosansenListWidget(tab_7, decryptFile, decryptFile.dosansenList, reloadFunc)
+def tab7AllWidget(tabFrame, decryptFile, reloadFunc):
+    ComicScriptWidget(tabFrame, decryptFile, decryptFile.comicScriptList, reloadFunc)
+    DosansenListWidget(tabFrame, decryptFile, decryptFile.dosansenList, reloadFunc)
 
-def tab8AllWidget(tab_8, decryptFile, reloadFunc):
-    frame = ScrollbarFrame(tab_8)
+def tab8AllWidget(tabFrame, decryptFile, reloadFunc):
+    frame = ScrollbarFrame(tabFrame)
     RailListWidget(frame.frame, decryptFile, decryptFile.railList, reloadFunc)
 
-def tab9AllWidget(tab_9, decryptFile, reloadFunc):
-    ElseList3Widget(tab_9, decryptFile, decryptFile.elseList3, reloadFunc)
+def tab9AllWidget(tabFrame, decryptFile, reloadFunc):
+    ElseList3Widget(tabFrame, decryptFile, decryptFile.elseList3, reloadFunc)
 
-def tab10AllWidget(tab_10, decryptFile, reloadFunc):
-    frame = ScrollbarFrame(tab_10)
+def tab10AllWidget(tabFrame, decryptFile, reloadFunc):
+    frame = ScrollbarFrame(tabFrame)
     AmbListWidget(frame.frame, decryptFile, decryptFile.ambList, reloadFunc)
