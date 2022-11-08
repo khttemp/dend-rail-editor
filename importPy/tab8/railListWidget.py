@@ -1,3 +1,5 @@
+import traceback
+
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox as mb
@@ -32,11 +34,11 @@ class RailListWidget:
 
         ###
         self.sidePackFrame = ttk.Frame(self.frame)
-        self.sidePackFrame.pack(anchor=NW)
+        self.sidePackFrame.pack(anchor=NW, padx=20)
 
         #
         self.blockFrameLf = ttk.LabelFrame(self.sidePackFrame, text="ブロック情報")
-        self.blockFrameLf.pack(anchor=NW, side=LEFT, padx=30, pady=15)
+        self.blockFrameLf.pack(anchor=NW, side=LEFT, padx=5, pady=15)
         self.prevRailLb = ttk.Label(self.blockFrameLf, text="繋げるレールNo", font=("", 14))
         self.prevRailLb.grid(row=0, column=0, sticky=W+E, padx=10, pady=10)
         self.v_prevRail = IntVar()
@@ -51,7 +53,7 @@ class RailListWidget:
 
         #
         self.xyzFrame = ttk.LabelFrame(self.sidePackFrame, text="向きXYZ情報")
-        self.xyzFrame.pack(anchor=NW, side=LEFT, pady=15)
+        self.xyzFrame.pack(anchor=NW, side=LEFT, padx=5, pady=15)
         self.xLb = ttk.Label(self.xyzFrame, text="xの向き", font=("", 14))
         self.xLb.grid(row=0, column=0, sticky=W+E, padx=10, pady=10)
         self.v_x = DoubleVar()
@@ -71,7 +73,7 @@ class RailListWidget:
         self.zEt.grid(row=2, column=1, sticky=W+E, padx=10, pady=10)
 
         self.kasenFrame = ttk.LabelFrame(self.sidePackFrame, text="モデル、架線情報")
-        self.kasenFrame.pack(anchor=NW, side=LEFT, padx=30, pady=15)
+        self.kasenFrame.pack(anchor=NW, side=LEFT, padx=5, pady=15)
         self.mdlNoLb = ttk.Label(self.kasenFrame, text="モデル(smf)", font=("", 14))
         self.mdlNoLb.grid(row=0, column=0, sticky=W+E, padx=10, pady=10)
         self.mdlNoCb = ttk.Combobox(self.kasenFrame, width=40, values=self.smfList, state="disabled")
@@ -177,6 +179,10 @@ class RailListWidget:
         self.v_railDataCnt = IntVar()
         self.railDataCntEt = ttk.Entry(self.railFrameCntFrame, textvariable=self.v_railDataCnt, font=("", 14), width=7, justify="center", state="readonly")
         self.railDataCntEt.grid(row=0, column=1, sticky=W+E, padx=10, pady=10)
+
+        if self.decryptFile.ver == "DEND_MAP_VER0300":
+            self.csvRevRailSaveBtn = ttk.Button(self.railFrameCntFrame, text="往復レール作成", command=self.saveRevRailCsv)
+            self.csvRevRailSaveBtn.grid(row=0, column=2, sticky=W+E, padx=30)
     
         self.railFrame = ttk.Frame(self.railFrameLf)
         self.railFrame.pack(anchor=NW, padx=10, pady=10)
@@ -374,3 +380,95 @@ class RailListWidget:
             errorMsg = "{0}行のデータを読み込み失敗しました。".format(count)
             mb.showerror(title="読み込みエラー", message=errorMsg)
             return
+
+    def saveRevRailCsv(self):
+        allModelRailCount = {railInfo[0] : railInfo[14] for railInfo in self.railList}
+        allModelRailLen = {i : self.decryptFile.smfList[i][3] for i in range(len(self.decryptFile.smfList))}
+        
+        filename = self.decryptFile.filename + "_rev.csv"
+        file_path = fd.asksaveasfilename(initialfile=filename, defaultextension='csv', filetypes=[('レールcsv', '*.csv')])
+        newRailList = []
+        errorMsg = "CSVで取り出す機能が失敗しました。\n権限問題の可能性があります。"
+        if file_path:
+            try:
+                w = open(file_path, "w")
+                w.write("index,prev_rail,block,")
+                w.write("dir_x,dir_y,dir_z,")
+                w.write("mdl_no,mdl_flg,mdl_kasenchu,per,")
+                w.write("flg,flg,flg,flg,")
+                w.write("rail_data,")
+                w.write("next_rail,next_no,prev_rail,prev_no,\n")
+                for railInfo in self.railList:
+                    newRailInfo = railInfo[1:]
+                    w.write("{0},{1},{2},".format(railInfo[0], railInfo[1], railInfo[2]))
+                    for i in range(3):
+                        w.write("{0},".format(railInfo[3+i]))
+                    w.write("{0},".format(railInfo[6]))
+                    w.write("{0},".format(railInfo[7]))
+                    w.write("{0},".format(railInfo[8]))
+                    w.write("{0},".format(railInfo[9]))
+                    for i in range(4):
+                        w.write("0x{:02x},".format(railInfo[10+i]))
+                    rail_data = railInfo[14]
+                    w.write("{0},".format(rail_data))
+                    preNextList = []
+                    for i in range(rail_data):
+                        preNextInfo = []
+                        for j in range(4):
+                            if j % 2 == 0:
+                                preNextInfo.append(railInfo[15+4*i+j])
+                            w.write("{0},".format(railInfo[15+4*i+j]))
+                        preNextList.append(preNextInfo)
+
+                    preNextList.reverse()
+                    railCount = 0
+                    for preNextInfo in preNextList:
+                        preNextInfo.reverse()
+                        for i in range(len(preNextInfo)):                                
+                            w.write("{0},".format(preNextInfo[i]))
+                            newRailInfo.append(preNextInfo[i])
+                            
+                            if i == 0:
+                                if preNextInfo[i] == -1:
+                                    w.write("{0},".format(-1))
+                                    newRailInfo.append(-1)
+                                    continue
+                                    
+                                if allModelRailCount[preNextInfo[i]] > 1:
+                                    w.write("{0},".format(railCount*100))
+                                    newRailInfo.append(railCount*100)
+                                else:
+                                    w.write("{0},".format(0))
+                                    newRailInfo.append(0)
+                            else:
+                                if preNextInfo[i] == -1:
+                                    w.write("{0},".format(-1))
+                                    newRailInfo.append(-1)
+                                    continue
+
+                                mdlNo = self.railList[preNextInfo[i]][6]
+                                railLen = allModelRailLen[mdlNo]
+                                if allModelRailCount[preNextInfo[i]] > 1:
+                                    w.write("{0},".format(railCount*100 + railLen - 1))
+                                    newRailInfo.append(railCount*100 + railLen - 1)
+                                else:
+                                    w.write("{0},".format(railLen - 1))
+                                    newRailInfo.append(railLen - 1)
+                    newRailList.append(newRailInfo)
+                    w.write("\n")
+                w.close()
+
+                self.decryptFile.ver = "DEND_MAP_VER0400"
+                self.decryptFile.byteArr[13] = 0x34
+                if not self.decryptFile.saveRailCsv(newRailList):
+                    self.decryptFile.printError()
+                    mb.showerror(title="エラー", message="予想外のエラーが発生しました")
+                    return
+                mb.showinfo(title="成功", message="CSVで自動作成しました。")
+                self.reloadFunc()
+                
+            except:
+                print(traceback.format_exc())
+                mb.showerror(title="エラー", message=errorMsg)
+        
+            
