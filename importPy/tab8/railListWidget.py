@@ -1,4 +1,4 @@
-import traceback
+import os
 
 from tkinter import *
 from tkinter import ttk
@@ -391,7 +391,10 @@ class RailListWidget:
         errorMsg = "CSVで取り出す機能が失敗しました。\n権限問題の可能性があります。"
         if file_path:
             try:
-                w = open(file_path, "w")
+                directory = os.path.dirname(file_path)
+                name = os.path.splitext(os.path.basename(file_path))[0]
+                path = os.path.join(directory, name + ".csv")
+                w = open(path, "w")
                 w.write("index,prev_rail,block,")
                 w.write("dir_x,dir_y,dir_z,")
                 w.write("mdl_no,mdl_flg,mdl_kasenchu,per,")
@@ -454,12 +457,15 @@ class RailListWidget:
                                 else:
                                     w.write("{0},".format(railLen - 1))
                                     newRailInfo.append(railLen - 1)
+                        railCount += 1
                     newRailList.append(newRailInfo)
                     w.write("\n")
                 w.close()
 
                 self.decryptFile.ver = "DEND_MAP_VER0400"
                 self.decryptFile.byteArr[13] = 0x34
+                path = os.path.join(directory, name + ".BIN")
+                self.decryptFile.filePath = path
                 if not self.decryptFile.saveRailCsv(newRailList):
                     self.decryptFile.printError()
                     mb.showerror(title="エラー", message="予想外のエラーが発生しました")
@@ -468,7 +474,6 @@ class RailListWidget:
                 self.reloadFunc()
                 
             except:
-                print(traceback.format_exc())
                 mb.showerror(title="エラー", message=errorMsg)
         
             

@@ -5,6 +5,7 @@ import traceback
 class RailDecrypt:
     def __init__(self, filePath):
         self.filePath = filePath
+        self.directory = os.path.dirname(self.filePath)
         self.filename = os.path.splitext(os.path.basename(self.filePath))[0]
         self.byteArr = bytearray()
         self.musicCnt = 0
@@ -418,7 +419,8 @@ class RailDecrypt:
         #Map
         writeFlag = True
         try:
-            w = open(self.filename + ".csv", "w")
+            path = os.path.join(self.directory, self.filename + ".csv")
+            w = open(path, "w")
             w.write("index,prev_rail,block,")
             w.write("dir_x,dir_y,dir_z,")
             w.write("mdl_no,mdl_flg,mdl_kasenchu,per,")
@@ -554,7 +556,8 @@ class RailDecrypt:
         index += 2
         writeFlag = True
         try:
-            w = open(self.filename + "_amb.csv", "w")
+            path = os.path.join(self.directory, self.filename + "_amb.csv")
+            w = open(path, "w")
             w.write("index,type,length,")
             w.write("rail_no,rail_pos,")
             w.write("base_pos_x,base_pos_y,base_pos_z,")
@@ -1019,21 +1022,21 @@ class RailDecrypt:
                 index += 2
 
             newByteArr = self.byteArr[0:index]
-            
+
             if mode == "modify" or mode == "insert":
                 encodeName = smfInfo[0].encode("shift-jis")
                 newByteArr.append(len(encodeName))
                 newByteArr.extend(encodeName)
-                newByteArr.append(smfInfo[1])
-                tempH = struct.pack("<h", smfInfo[2])
+                newByteArr.append(int(smfInfo[1]))
+                tempH = struct.pack("<h", int(smfInfo[2]))
                 newByteArr.extend(tempH) 
                 for i in range(3):
-                    tempF = struct.pack("<f", smfInfo[3+i])
+                    tempF = struct.pack("<f", float(smfInfo[3+i]))
                     newByteArr.extend(tempF)
                 for i in range(3):
-                    tempI = struct.pack("<i", smfInfo[6+i])
+                    tempI = struct.pack("<i", int(smfInfo[6+i]))
                     newByteArr.extend(tempI)
-                tempH = struct.pack("<h", smfInfo[9])
+                tempH = struct.pack("<h", int(smfInfo[9]))
                 newByteArr.extend(tempH)
 
                 if mode == "modify":
@@ -1199,7 +1202,7 @@ class RailDecrypt:
                         tempH = struct.pack("<h", comicScriptInfo[j])
                         newByteArr.extend(tempH)
 
-            index = self.dosanIdx
+            index = self.dosansenIdx
             newByteArr.extend(self.byteArr[index:])
             self.save(newByteArr)
             return True
