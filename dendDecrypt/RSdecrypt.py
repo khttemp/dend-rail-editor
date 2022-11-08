@@ -555,7 +555,7 @@ class RailDecrypt:
         writeFlag = True
         try:
             w = open(self.filename + "_amb.csv", "w")
-            w.write("index,const0,const1000,")
+            w.write("index,type,length,")
             w.write("rail_no,rail_pos,")
             w.write("base_pos_x,base_pos_y,base_pos_z,")
             w.write("base_dir_x,base_dir_y,base_dir_z,")
@@ -574,14 +574,14 @@ class RailDecrypt:
             if writeFlag:
                 w.write("{0},".format(i))
 
-            # 0
+            # type
             temp = self.byteArr[index]
             ambInfo.append(temp)
             index += 1
             if writeFlag:
                 w.write("{0},".format(temp))
 
-            # 1000
+            # length
             temp = struct.unpack("<f", self.byteArr[index:index+4])[0]
             ambInfo.append(temp)
             index += 4

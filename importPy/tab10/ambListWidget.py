@@ -39,11 +39,11 @@ class AmbListWidget:
         #
         self.ambInfoLf = ttk.LabelFrame(self.sidePackFrame, text="AMB情報")
         self.ambInfoLf.pack(anchor=NW, side=LEFT, padx=30, pady=15)
-        self.const0Lb = ttk.Label(self.ambInfoLf, text="const0", font=("", 14))
-        self.const0Lb.grid(row=0, column=0, sticky=W+E, padx=10, pady=10)
-        self.v_const0 = IntVar()
-        self.const0Et = ttk.Entry(self.ambInfoLf, textvariable=self.v_const0, font=("", 14), width=7, justify="center", state="readonly")
-        self.const0Et.grid(row=0, column=1, sticky=W+E, padx=10, pady=10)
+        self.typeLb = ttk.Label(self.ambInfoLf, text="タイプ", font=("", 14))
+        self.typeLb.grid(row=0, column=0, sticky=W+E, padx=10, pady=10)
+        self.v_type = IntVar()
+        self.typeEt = ttk.Entry(self.ambInfoLf, textvariable=self.v_type, font=("", 14), width=7, justify="center", state="readonly")
+        self.typeEt.grid(row=0, column=1, sticky=W+E, padx=10, pady=10)
 
         self.lengthLb = ttk.Label(self.ambInfoLf, text="長さ", font=("", 14))
         self.lengthLb.grid(row=1, column=0, sticky=W+E, padx=10, pady=10)
@@ -260,7 +260,7 @@ class AmbListWidget:
             return
         ambInfo = self.ambList[ambNo]
 
-        self.v_const0.set(ambInfo[0])
+        self.v_type.set(ambInfo[0])
         self.v_length.set(ambInfo[1])
         self.v_railNo.set(ambInfo[2])
         self.v_railPos.set(ambInfo[3])
@@ -332,8 +332,8 @@ class AmbListWidget:
                         print(arr)
                         raise Exception
 
-                    const0 = int(float(arr[1]))
-                    ambInfo.append(const0)
+                    type0 = int(float(arr[1]))
+                    ambInfo.append(type0)
 
                     length = int(float(arr[2]))
                     ambInfo.append(length)
