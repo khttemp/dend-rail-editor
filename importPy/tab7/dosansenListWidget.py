@@ -1,11 +1,12 @@
 from functools import partial
 
-from tkinter import *
+import tkinter
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
 
-from importPy.tkinterScrollbarFrameClass import *
+from importPy.tkinterScrollbarFrameClass import ScrollbarFrame
+
 
 class DosansenListWidget:
     def __init__(self, frame, decryptFile, dosansenList, reloadFunc):
@@ -15,72 +16,72 @@ class DosansenListWidget:
         self.reloadFunc = reloadFunc
 
         self.dosansenListLf = ttk.LabelFrame(self.frame, text="土讃線情報", height=900)
-        self.dosansenListLf.pack(anchor=NW, padx=10, expand=True, fill=BOTH)
+        self.dosansenListLf.pack(anchor=tkinter.NW, padx=10, expand=True, fill=tkinter.BOTH)
 
         scrollbarFrame = ScrollbarFrame(self.dosansenListLf)
 
         self.txtFrame = ttk.Frame(scrollbarFrame.frame)
-        self.txtFrame.pack(anchor=NW)
+        self.txtFrame.pack(anchor=tkinter.NW)
 
-        self.dosansenCntNameLb = Label(self.txtFrame, text="土讃線情報数", font=("", 20), width=12, borderwidth=1, relief="solid")
-        self.dosansenCntNameLb.grid(row=0, column=0, sticky=W+E)
-        self.varDosansenCnt = IntVar()
+        self.dosansenCntNameLb = tkinter.Label(self.txtFrame, text="土讃線情報数", font=("", 20), width=12, borderwidth=1, relief="solid")
+        self.dosansenCntNameLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
+        self.varDosansenCnt = tkinter.IntVar()
         self.varDosansenCnt.set(len(self.dosansenList))
-        self.dosansenCntTextLb = Label(self.txtFrame, textvariable=self.varDosansenCnt, font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.dosansenCntTextLb.grid(row=0, column=1, sticky=W+E)
-        self.dosansenCntBtn = Button(self.txtFrame, text="修正", font=("", 14), command=lambda :self.editDosansenCnt(self.varDosansenCnt.get()))
-        self.dosansenCntBtn.grid(row=0, column=2, sticky=W+E)
+        self.dosansenCntTextLb = tkinter.Label(self.txtFrame, textvariable=self.varDosansenCnt, font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.dosansenCntTextLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
+        self.dosansenCntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editDosansenCnt(self.varDosansenCnt.get()))
+        self.dosansenCntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
 
         for i in range(len(self.dosansenList)):
             self.txtFrame2 = ttk.Frame(scrollbarFrame.frame)
-            self.txtFrame2.pack(anchor=NW, pady=5, fill=BOTH)
-        
+            self.txtFrame2.pack(anchor=tkinter.NW, pady=5, fill=tkinter.BOTH)
+
             dosansenInfo = self.dosansenList[i]
-            self.tempBtn = Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editDosansenList, i, dosansenInfo))
-            self.tempBtn.grid(row=i, column=0, sticky=W+E)
-            self.startLb = Label(self.txtFrame2, text="始め", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.startLb.grid(row=i, column=1, sticky=W+E)
-            self.endLb = Label(self.txtFrame2, text="着地", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.endLb.grid(row=i+1, column=1, sticky=W+E)
-            self.ele1Lb = Label(self.txtFrame2, text="e1", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.ele1Lb.grid(row=i+2, column=1, sticky=W+E)
-            self.endLb = Label(self.txtFrame2, text="anime", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.endLb.grid(row=i+3, column=1, sticky=W+E)
-            self.ele2Lb = Label(self.txtFrame2, text="e2", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.ele2Lb.grid(row=i+4, column=1, sticky=W+E)
-            self.f1Lb = Label(self.txtFrame2, text="f1", font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.f1Lb.grid(row=i+5, column=1, sticky=W+E)
+            self.tempBtn = tkinter.Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editDosansenList, i, dosansenInfo))
+            self.tempBtn.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
+            self.startLb = tkinter.Label(self.txtFrame2, text="始め", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.startLb.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+            self.endLb = tkinter.Label(self.txtFrame2, text="着地", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.endLb.grid(row=i + 1, column=1, sticky=tkinter.W + tkinter.E)
+            self.ele1Lb = tkinter.Label(self.txtFrame2, text="e1", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.ele1Lb.grid(row=i + 2, column=1, sticky=tkinter.W + tkinter.E)
+            self.endLb = tkinter.Label(self.txtFrame2, text="anime", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.endLb.grid(row=i + 3, column=1, sticky=tkinter.W + tkinter.E)
+            self.ele2Lb = tkinter.Label(self.txtFrame2, text="e2", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.ele2Lb.grid(row=i + 4, column=1, sticky=tkinter.W + tkinter.E)
+            self.f1Lb = tkinter.Label(self.txtFrame2, text="f1", font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.f1Lb.grid(row=i + 5, column=1, sticky=tkinter.W + tkinter.E)
             for j in range(len(dosansenInfo)):
                 if j in [0, 1, 2]:
-                    self.varTempH = IntVar()
+                    self.varTempH = tkinter.IntVar()
                     self.varTempH.set(int(dosansenInfo[j]))
-                    self.temphTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.temphTextLb.grid(row=i, column=2+j, sticky=W+E)
+                    self.temphTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.temphTextLb.grid(row=i, column=2 + j, sticky=tkinter.W + tkinter.E)
                 elif j in [3, 4, 5]:
-                    self.varTempH = IntVar()
+                    self.varTempH = tkinter.IntVar()
                     self.varTempH.set(int(dosansenInfo[j]))
-                    self.temphTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.temphTextLb.grid(row=i+1, column=j-1, sticky=W+E)
+                    self.temphTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.temphTextLb.grid(row=i + 1, column=j - 1, sticky=tkinter.W + tkinter.E)
                 elif j == 6:
-                    self.varTempH = IntVar()
+                    self.varTempH = tkinter.IntVar()
                     self.varTempH.set(int(dosansenInfo[j]))
-                    self.temphTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.temphTextLb.grid(row=i+2, column=j-4, sticky=W+E)
+                    self.temphTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.temphTextLb.grid(row=i + 2, column=j - 4, sticky=tkinter.W + tkinter.E)
                 elif j in [7, 8, 9, 10]:
-                    self.varTempH = DoubleVar()
+                    self.varTempH = tkinter.DoubleVar()
                     self.varTempH.set(round(float(dosansenInfo[j]), 3))
-                    self.tempfTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.tempfTextLb.grid(row=i+3, column=j-5, sticky=W+E)
+                    self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.tempfTextLb.grid(row=i + 3, column=j - 5, sticky=tkinter.W + tkinter.E)
                 elif j == 11:
-                    self.varTempH = IntVar()
+                    self.varTempH = tkinter.IntVar()
                     self.varTempH.set(int(dosansenInfo[j]))
-                    self.temphTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.temphTextLb.grid(row=i+4, column=j-9, sticky=W+E)
+                    self.temphTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.temphTextLb.grid(row=i + 4, column=j - 9, sticky=tkinter.W + tkinter.E)
                 elif j == 12:
-                    self.varTempH = DoubleVar()
+                    self.varTempH = tkinter.DoubleVar()
                     self.varTempH.set(round(float(dosansenInfo[j]), 3))
-                    self.tempfTextLb = Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.tempfTextLb.grid(row=i+5, column=j-10, sticky=W+E)
+                    self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempH, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.tempfTextLb.grid(row=i + 5, column=j - 10, sticky=tkinter.W + tkinter.E)
 
     def editDosansenCnt(self, val):
         result = EditDosansenCntWidget(self.frame, "土讃線情報数の変更", self.decryptFile, val)
@@ -89,9 +90,9 @@ class DosansenListWidget:
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")
                 return
-            mb.showinfo(title="成功", message="駅名標数を修正しました")
+            mb.showinfo(title="成功", message="土讃線情報数を修正しました")
             self.reloadFunc()
-            
+
     def editDosansenList(self, i, valList):
         result = EditDosansenWidget(self.frame, "土讃線情報の変更", self.decryptFile, valList)
         if result.reloadFlag:
@@ -100,8 +101,9 @@ class DosansenListWidget:
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")
                 return
-            mb.showinfo(title="成功", message="車両位置情報を修正しました")
+            mb.showinfo(title="成功", message="土讃線情報を修正しました")
             self.reloadFunc()
+
 
 class EditDosansenCntWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, val):
@@ -117,7 +119,7 @@ class EditDosansenCntWidget(sd.Dialog):
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
         self.valLb.pack()
 
-        self.varDosansenCnt = IntVar()
+        self.varDosansenCnt = tkinter.IntVar()
         self.varDosansenCnt.set(self.val)
         self.valEt = ttk.Entry(master, textvariable=self.varDosansenCnt, font=("", 14), width=16)
         self.valEt.pack()
@@ -134,7 +136,7 @@ class EditDosansenCntWidget(sd.Dialog):
                         mb.showerror(title="数字エラー", message=errorMsg)
                         return False
                     self.resultValue = res
-                except:
+                except Exception:
                     errorMsg = "整数で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
             except Exception:
@@ -151,6 +153,7 @@ class EditDosansenCntWidget(sd.Dialog):
 
     def apply(self):
         self.reloadFlag = True
+
 
 class EditDosansenWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, dosansenInfo):
@@ -181,16 +184,16 @@ class EditDosansenWidget(sd.Dialog):
         ]
         for i in range(len(self.dosansenInfo)):
             self.stationLb = ttk.Label(master, text=dosansenInfoLbList[i], font=("", 14))
-            self.stationLb.grid(row=i, column=0, sticky=W+E)
+            self.stationLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
             if i in [7, 8, 9, 10, 12]:
-                self.varDosansen = DoubleVar()
+                self.varDosansen = tkinter.DoubleVar()
                 self.varDosansen.set(round(float(self.dosansenInfo[i]), 3))
             else:
-                self.varDosansen = IntVar()
+                self.varDosansen = tkinter.IntVar()
                 self.varDosansen.set(self.dosansenInfo[i])
             self.varList.append(self.varDosansen)
             self.dosansenEt = ttk.Entry(master, textvariable=self.varDosansen, font=("", 14))
-            self.dosansenEt.grid(row=i, column=1, sticky=W+E)
+            self.dosansenEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
 
     def validate(self):
         self.resultValueList = []
@@ -205,10 +208,10 @@ class EditDosansenWidget(sd.Dialog):
                             res = int(self.varList[i].get())
                         self.resultValueList.append(res)
                     return True
-                except:
+                except Exception:
                     errorMsg = "数字で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
-            except Exception as e:
+            except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)
 

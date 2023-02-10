@@ -1,7 +1,8 @@
-from tkinter import *
+import tkinter
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
+
 
 class TrainCountWidget:
     def __init__(self, frame, decryptFile, reloadFunc):
@@ -9,18 +10,18 @@ class TrainCountWidget:
         self.decryptFile = decryptFile
         self.reloadFunc = reloadFunc
 
-        self.txtFrame = Frame(self.frame, padx=10, pady=5)
-        self.txtFrame.pack(anchor=NW)
+        self.txtFrame = tkinter.Frame(self.frame, padx=10, pady=5)
+        self.txtFrame.pack(anchor=tkinter.NW)
 
-        self.trainCntLb = Label(self.txtFrame, text="車両数", font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.trainCntLb.grid(row=0, column=0, sticky=W+E)
+        self.trainCntLb = tkinter.Label(self.txtFrame, text="車両数", font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.trainCntLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
 
-        self.varTrainCnt = IntVar()
+        self.varTrainCnt = tkinter.IntVar()
         self.varTrainCnt.set(self.decryptFile.trainCnt)
-        self.trainCntTextLb = Label(self.txtFrame, textvariable=self.varTrainCnt, font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.trainCntTextLb.grid(row=0, column=1, sticky=W+E)
-        self.trainCntBtn = Button(self.txtFrame, text="修正", font=("", 14), command=lambda:self.editVar(self.varTrainCnt.get()))
-        self.trainCntBtn.grid(row=0, column=2, sticky=W+E)
+        self.trainCntTextLb = tkinter.Label(self.txtFrame, textvariable=self.varTrainCnt, font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.trainCntTextLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
+        self.trainCntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editVar(self.varTrainCnt.get()))
+        self.trainCntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
 
     def editVar(self, value):
         result = EditTrainCountWidget(self.frame, "車両数変更", self.decryptFile, value)
@@ -34,7 +35,7 @@ class TrainCountWidget:
             mb.showinfo(title="成功", message="車両数情報を修正しました")
 
             self.reloadFunc()
-        
+
 
 class EditTrainCountWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, val):
@@ -50,7 +51,7 @@ class EditTrainCountWidget(sd.Dialog):
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
         self.valLb.pack()
 
-        self.varTrainCnt = IntVar()
+        self.varTrainCnt = tkinter.IntVar()
         self.varTrainCnt.set(self.val)
         self.valEt = ttk.Entry(master, textvariable=self.varTrainCnt, font=("", 14), width=16)
         self.valEt.pack()
@@ -67,7 +68,7 @@ class EditTrainCountWidget(sd.Dialog):
                         mb.showerror(title="数字エラー", message=errorMsg)
                         return False
                     self.resultValue = res
-                except:
+                except Exception:
                     errorMsg = "整数で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
             except Exception:
@@ -81,6 +82,6 @@ class EditTrainCountWidget(sd.Dialog):
                     return True
             else:
                 return True
-                
+
     def apply(self):
         self.reloadFlag = True

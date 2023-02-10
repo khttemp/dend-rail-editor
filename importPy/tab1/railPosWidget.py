@@ -1,9 +1,10 @@
 from functools import partial
 
-from tkinter import *
+import tkinter
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
+
 
 class RailPosWidget:
     def __init__(self, frame, title, num, decryptFile, trainList, reloadFunc):
@@ -18,30 +19,30 @@ class RailPosWidget:
         self.railPosLf = ttk.LabelFrame(self.frame, text=title)
         self.railPosLf.pack()
 
-        self.playHeaderLb =  Label(self.railPosLf, text="player", font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.playHeaderLb.grid(row=0, column=0, sticky=W+E)
+        self.playHeaderLb = tkinter.Label(self.railPosLf, text="player", font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.playHeaderLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
 
-        self.railNoHeaderLb = Label(self.railPosLf, text="railNo", font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.railNoHeaderLb.grid(row=0, column=1, sticky=W+E)
-        self.railPosHeaderLb = Label(self.railPosLf, text="railPos", font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.railPosHeaderLb.grid(row=0, column=2, sticky=W+E)
-        self.ele1HeaderLb = Label(self.railPosLf, text="ele1", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele1HeaderLb.grid(row=0, column=3, sticky=W+E)
-        self.ele2HeaderLb = Label(self.railPosLf, text="ele2", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele2HeaderLb.grid(row=0, column=4, sticky=W+E)
-        self.ele3HeaderLb = Label(self.railPosLf, text="ele3", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele3HeaderLb.grid(row=0, column=5, sticky=W+E)
-            
+        self.railNoHeaderLb = tkinter.Label(self.railPosLf, text="railNo", font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.railNoHeaderLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
+        self.railPosHeaderLb = tkinter.Label(self.railPosLf, text="railPos", font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.railPosHeaderLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
+        self.ele1HeaderLb = tkinter.Label(self.railPosLf, text="ele1", font=("", 20), width=5, borderwidth=1, relief="solid")
+        self.ele1HeaderLb.grid(row=0, column=3, sticky=tkinter.W + tkinter.E)
+        self.ele2HeaderLb = tkinter.Label(self.railPosLf, text="ele2", font=("", 20), width=5, borderwidth=1, relief="solid")
+        self.ele2HeaderLb.grid(row=0, column=4, sticky=tkinter.W + tkinter.E)
+        self.ele3HeaderLb = tkinter.Label(self.railPosLf, text="ele3", font=("", 20), width=5, borderwidth=1, relief="solid")
+        self.ele3HeaderLb.grid(row=0, column=5, sticky=tkinter.W + tkinter.E)
+
         for i in range(len(self.trainList)):
             trainInfo = self.trainList[i]
-            self.playLb = Label(self.railPosLf, text="{0}P".format(i+1), font=("", 20), borderwidth=1, relief="solid")
-            self.playLb.grid(row=i+1, column=0, sticky=W+E)
+            self.playLb = tkinter.Label(self.railPosLf, text="{0}P".format(i + 1), font=("", 20), borderwidth=1, relief="solid")
+            self.playLb.grid(row=i + 1, column=0, sticky=tkinter.W + tkinter.E)
             for j in range(len(trainInfo)):
-                self.valLb = Label(self.railPosLf, text=trainInfo[j], font=("", 20), borderwidth=1, relief="solid")
-                self.valLb.grid(row=i+1, column=j+1, sticky=W+E)
+                self.valLb = tkinter.Label(self.railPosLf, text=trainInfo[j], font=("", 20), borderwidth=1, relief="solid")
+                self.valLb.grid(row=i + 1, column=j + 1, sticky=tkinter.W + tkinter.E)
 
-            self.railBtn = Button(self.railPosLf, text="修正", font=("", 14), command=partial(self.editVar, i, trainInfo))
-            self.railBtn.grid(row=i+1, column=len(trainInfo)+1, sticky=W+E)
+            self.railBtn = tkinter.Button(self.railPosLf, text="修正", font=("", 14), command=partial(self.editVar, i, trainInfo))
+            self.railBtn.grid(row=i + 1, column=len(trainInfo) + 1, sticky=tkinter.W + tkinter.E)
 
     def editVar(self, i, trainInfo):
         result = EditRailPosWidget(self.frame, self.title + "の変更", self.decryptFile, trainInfo)
@@ -52,9 +53,10 @@ class RailPosWidget:
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")
                 return
-            mb.showinfo(title="成功", message="車両位置情報を修正しました")
+            mb.showinfo(title="成功", message=self.title + "情報を修正しました")
 
             self.reloadFunc()
+
 
 class EditRailPosWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, trainInfo):
@@ -69,17 +71,17 @@ class EditRailPosWidget(sd.Dialog):
         self.resizable(False, False)
 
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
-        self.valLb.grid(columnspan=2, row=0, column=0, sticky=W+E)
+        self.valLb.grid(columnspan=2, row=0, column=0, sticky=tkinter.W + tkinter.E)
 
         trainInfoLbList = ["railNo", "railPos", "ele1", "ele2", "ele3"]
         for i in range(len(self.trainInfo)):
             self.railLb = ttk.Label(master, text=trainInfoLbList[i], font=("", 14))
-            self.railLb.grid(row=i+1, column=0, sticky=W+E)
-            self.varRail = IntVar()
+            self.railLb.grid(row=i + 1, column=0, sticky=tkinter.W + tkinter.E)
+            self.varRail = tkinter.IntVar()
             self.varRail.set(self.trainInfo[i])
             self.varList.append(self.varRail)
             self.railEt = ttk.Entry(master, textvariable=self.varRail, font=("", 14))
-            self.railEt.grid(row=i+1, column=1, sticky=W+E)
+            self.railEt.grid(row=i + 1, column=1, sticky=tkinter.W + tkinter.E)
 
     def validate(self):
         self.resultValueList = []
@@ -95,7 +97,7 @@ class EditRailPosWidget(sd.Dialog):
                             return False
                         self.resultValueList.append(res)
                     return True
-                except:
+                except Exception:
                     errorMsg = "整数で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
             except Exception:

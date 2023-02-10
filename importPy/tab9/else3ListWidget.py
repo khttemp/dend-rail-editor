@@ -1,13 +1,14 @@
 from functools import partial
 
-from tkinter import *
+import tkinter
 from tkinter import ttk
 from tkinter import messagebox as mb
 from tkinter import simpledialog as sd
 
-from importPy.tkinterScrollbarFrameClass import *
+from importPy.tkinterScrollbarFrameClass import ScrollbarFrame
 
-class ElseList3Widget:
+
+class Else3ListWidget:
     def __init__(self, frame, decryptFile, else3List, reloadFunc):
         self.frame = frame
         self.decryptFile = decryptFile
@@ -15,54 +16,54 @@ class ElseList3Widget:
         self.reloadFunc = reloadFunc
 
         self.elseLf = ttk.LabelFrame(self.frame, text="else3")
-        self.elseLf.pack(anchor=NW, padx=10, expand=True, fill=BOTH)
+        self.elseLf.pack(anchor=tkinter.NW, padx=10, expand=True, fill=tkinter.BOTH)
 
         scrollbarFrame = ScrollbarFrame(self.elseLf)
 
         self.txtFrame = ttk.Frame(scrollbarFrame.frame)
-        self.txtFrame.pack(anchor=NW)
+        self.txtFrame.pack(anchor=tkinter.NW)
 
-        self.else3CntNameLb = Label(self.txtFrame, text="else3数", font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.else3CntNameLb.grid(row=0, column=0, sticky=W+E)
-        self.varElse3Cnt = IntVar()
+        self.else3CntNameLb = tkinter.Label(self.txtFrame, text="else3数", font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.else3CntNameLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
+        self.varElse3Cnt = tkinter.IntVar()
         self.varElse3Cnt.set(len(self.else3List))
-        self.else3CntTextLb = Label(self.txtFrame, textvariable=self.varElse3Cnt, font=("", 20), width=7, borderwidth=1, relief="solid")
-        self.else3CntTextLb.grid(row=0, column=1, sticky=W+E)
-        self.else3CntBtn = Button(self.txtFrame, text="修正", font=("", 14), command=lambda :self.editElse3Cnt(self.varElse3Cnt.get()))
-        self.else3CntBtn.grid(row=0, column=2, sticky=W+E)
+        self.else3CntTextLb = tkinter.Label(self.txtFrame, textvariable=self.varElse3Cnt, font=("", 20), width=7, borderwidth=1, relief="solid")
+        self.else3CntTextLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
+        if self.decryptFile.game == "RS":
+            self.else3CntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editElse3Cnt(self.varElse3Cnt.get()))
+            self.else3CntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
 
         self.txtFrame2 = ttk.Frame(scrollbarFrame.frame)
-        self.txtFrame2.pack(anchor=NW, pady=5)
+        self.txtFrame2.pack(anchor=tkinter.NW, pady=5)
         rowNum = 0
-        
+
         for i in range(len(self.else3List)):
             else3Info = self.else3List[i]
-            
-            self.tempBtn = Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3ListCnt, i, else3Info[0:2]))
-            self.tempBtn.grid(row=rowNum, column=0, sticky=W+E)
+            if self.decryptFile.game == "RS":
+                self.tempBtn = tkinter.Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3ListCnt, i, else3Info[0:2]))
+                self.tempBtn.grid(row=rowNum, column=0, sticky=tkinter.W + tkinter.E)
 
-            self.varRailNo = IntVar()
+            self.varRailNo = tkinter.IntVar()
             self.varRailNo.set(int(else3Info[0]))
-            self.tempfTextLb = Label(self.txtFrame2, textvariable=self.varRailNo, font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.tempfTextLb.grid(row=rowNum, column=1, sticky=W+E)
+            self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varRailNo, font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.tempfTextLb.grid(row=rowNum, column=1, sticky=tkinter.W + tkinter.E)
 
-            self.varTemp = IntVar()
+            self.varTemp = tkinter.IntVar()
             self.varTemp.set(int(else3Info[1]))
-            self.tempfTextLb = Label(self.txtFrame2, textvariable=self.varTemp, font=("", 20), width=7, borderwidth=1, relief="solid")
-            self.tempfTextLb.grid(row=rowNum, column=2, sticky=W+E)
+            self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTemp, font=("", 20), width=7, borderwidth=1, relief="solid")
+            self.tempfTextLb.grid(row=rowNum, column=2, sticky=tkinter.W + tkinter.E)
 
             rowNum += 1
-            
+
             for j in range(else3Info[1]):
                 for k in range(8):
-                    self.varTemp = IntVar()
-                    self.varTemp.set(int(else3Info[2+8*j+k]))
-                    self.tempfTextLb = Label(self.txtFrame2, textvariable=self.varTemp, font=("", 20), width=7, borderwidth=1, relief="solid")
-                    self.tempfTextLb.grid(row=rowNum, column=k+1, sticky=W+E)
-                self.tempBtn = Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3List, i, j, else3Info))
-                self.tempBtn.grid(row=rowNum, column=0, sticky=W+E)
+                    self.varTemp = tkinter.IntVar()
+                    self.varTemp.set(int(else3Info[2 + 8 * j + k]))
+                    self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTemp, font=("", 20), width=7, borderwidth=1, relief="solid")
+                    self.tempfTextLb.grid(row=rowNum, column=k + 1, sticky=tkinter.W + tkinter.E)
+                self.tempBtn = tkinter.Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3List, i, j, else3Info))
+                self.tempBtn.grid(row=rowNum, column=0, sticky=tkinter.W + tkinter.E)
                 rowNum += 1
-            
 
     def editElse3Cnt(self, val):
         result = EditElse3CntWidget(self.frame, "else3数の変更", self.decryptFile, val)
@@ -83,21 +84,22 @@ class ElseList3Widget:
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")
                 return
-            mb.showinfo(title="成功", message="else3数を修正しました")
+            mb.showinfo(title="成功", message="else3情報を修正しました")
             self.reloadFunc()
-            
+
     def editElse3List(self, i, j, valList):
-        else3List = valList[2+8*j:10+8*j]
+        else3List = valList[2 + 8 * j:10 + 8 * j]
         result = EditElse3ListWidget(self.frame, "else3の変更", self.decryptFile, else3List)
         if result.reloadFlag:
             for k in range(8):
-                self.else3List[i][2+8*j+k] = result.resultValueList[k]
+                self.else3List[i][2 + 8 * j + k] = result.resultValueList[k]
             if not self.decryptFile.saveElse3List(self.else3List):
                 self.decryptFile.printError()
                 mb.showerror(title="エラー", message="予想外のエラーが発生しました")
                 return
             mb.showinfo(title="成功", message="else3情報を修正しました")
             self.reloadFunc()
+
 
 class EditElse3CntWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, val):
@@ -113,7 +115,7 @@ class EditElse3CntWidget(sd.Dialog):
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
         self.valLb.pack()
 
-        self.varElse3Cnt = IntVar()
+        self.varElse3Cnt = tkinter.IntVar()
         self.varElse3Cnt.set(self.val)
         self.valEt = ttk.Entry(master, textvariable=self.varElse3Cnt, font=("", 14), width=16)
         self.valEt.pack()
@@ -130,7 +132,7 @@ class EditElse3CntWidget(sd.Dialog):
                         mb.showerror(title="数字エラー", message=errorMsg)
                         return False
                     self.resultValue = res
-                except:
+                except Exception:
                     errorMsg = "整数で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
             except Exception:
@@ -148,6 +150,7 @@ class EditElse3CntWidget(sd.Dialog):
     def apply(self):
         self.reloadFlag = True
 
+
 class EditElse3ListCntWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, else3Info):
         self.decryptFile = decryptFile
@@ -163,12 +166,12 @@ class EditElse3ListCntWidget(sd.Dialog):
         else3InfoLbList = ["レールNo", "数"]
         for i in range(len(self.else3Info)):
             self.else3Lb = ttk.Label(master, text=else3InfoLbList[i], font=("", 14))
-            self.else3Lb.grid(row=i, column=0, sticky=W+E)
-            self.varElse3 = IntVar()
+            self.else3Lb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
+            self.varElse3 = tkinter.IntVar()
             self.varElse3.set(self.else3Info[i])
             self.varList.append(self.varElse3)
             self.else3Et = ttk.Entry(master, textvariable=self.varElse3, font=("", 14))
-            self.else3Et.grid(row=i, column=1, sticky=W+E)
+            self.else3Et.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
 
     def validate(self):
         self.resultValueList = []
@@ -183,10 +186,10 @@ class EditElse3ListCntWidget(sd.Dialog):
                             mb.showerror(title="数字エラー", message=errorMsg)
                             return False
                         self.resultValueList.append(res)
-                except:
+                except Exception:
                     errorMsg = "数字で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
-            except Exception as e:
+            except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)
 
@@ -200,6 +203,7 @@ class EditElse3ListCntWidget(sd.Dialog):
 
     def apply(self):
         self.reloadFlag = True
+
 
 class EditElse3ListWidget(sd.Dialog):
     def __init__(self, master, title, decryptFile, else3Info):
@@ -216,12 +220,12 @@ class EditElse3ListWidget(sd.Dialog):
         else3InfoLbList = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"]
         for i in range(len(self.else3Info)):
             self.else3Lb = ttk.Label(master, text=else3InfoLbList[i], font=("", 14))
-            self.else3Lb.grid(row=i, column=0, sticky=W+E)
-            self.varElse3 = IntVar()
+            self.else3Lb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
+            self.varElse3 = tkinter.IntVar()
             self.varElse3.set(self.else3Info[i])
             self.varList.append(self.varElse3)
             self.else3Et = ttk.Entry(master, textvariable=self.varElse3, font=("", 14))
-            self.else3Et.grid(row=i, column=1, sticky=W+E)
+            self.else3Et.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
 
     def validate(self):
         self.resultValueList = []
@@ -233,10 +237,10 @@ class EditElse3ListWidget(sd.Dialog):
                         res = int(self.varList[i].get())
                         self.resultValueList.append(res)
                     return True
-                except:
+                except Exception:
                     errorMsg = "数字で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
-            except Exception as e:
+            except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)
 
