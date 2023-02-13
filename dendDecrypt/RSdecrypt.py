@@ -39,8 +39,7 @@ class RailDecrypt:
             line = f.read()
             f.close()
             self.byteArr = bytearray(line)
-            self.decrypt()
-            return True
+            return self.decrypt()
         except Exception:
             self.error = traceback.format_exc()
             return False
@@ -80,7 +79,7 @@ class RailDecrypt:
 
         header = self.byteArr[0:index].decode("shift-jis")
         if header != "DEND_MAP_VER0300" and header != "DEND_MAP_VER0400":
-            raise Exception
+            return False
 
         if header == "DEND_MAP_VER0400":
             readFlag = True
@@ -110,15 +109,15 @@ class RailDecrypt:
             index += 2
 
             # rail pos unknown
-            tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-            trainInfo.append(tempH)
-            index += 2
-            tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-            trainInfo.append(tempH)
-            index += 2
-
-            trainInfo.append(self.byteArr[index])
+            temp = self.byteArr[index]
+            trainInfo.append(temp)
             index += 1
+
+            tempF = struct.unpack("<f", self.byteArr[index:index + 4])[0]
+            tempF = round(tempF, 5)
+            trainInfo.append(tempF)
+            index += 4
+
             # rail pos unknown
             self.trainList.append(trainInfo)
 
@@ -133,16 +132,15 @@ class RailDecrypt:
         trainInfo2.append(boneNo)
         index += 2
 
-        tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-        trainInfo2.append(tempH)
-        index += 2
-
-        tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-        trainInfo2.append(tempH)
-        index += 2
-
-        trainInfo2.append(self.byteArr[index])
+        temp = self.byteArr[index]
+        trainInfo2.append(temp)
         index += 1
+
+        tempF = struct.unpack("<f", self.byteArr[index:index + 4])[0]
+        tempF = round(tempF, 5)
+        trainInfo2.append(tempF)
+        index += 4
+
         self.trainList2.append(trainInfo2)
 
         # 試運転、二人バトルの初期レール位置
@@ -157,16 +155,15 @@ class RailDecrypt:
             index += 2
 
             # unknown
-            tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-            trainInfo3.append(tempH)
-            index += 2
-
-            tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-            trainInfo3.append(tempH)
-            index += 2
-
-            trainInfo3.append(self.byteArr[index])
+            temp = self.byteArr[index]
+            trainInfo3.append(temp)
             index += 1
+
+            tempF = struct.unpack("<f", self.byteArr[index:index + 4])[0]
+            tempF = round(tempF, 5)
+            trainInfo3.append(tempF)
+            index += 4
+
             self.trainList3.append(trainInfo3)
             # unknown
 
@@ -321,14 +318,10 @@ class RailDecrypt:
                 tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
                 elseInfo2.append(tempH)
                 index += 2
-            for i in range(2):
+            for i in range(3):
                 tempF = struct.unpack("<f", self.byteArr[index:index + 4])[0]
                 elseInfo2.append(tempF)
                 index += 4
-            for i in range(2):
-                tempH = struct.unpack("<h", self.byteArr[index:index + 2])[0]
-                elseInfo2.append(tempH)
-                index += 2
             elseInfo2.append(self.byteArr[index])
             index += 1
             self.else2List.append(elseInfo2)
@@ -574,8 +567,9 @@ class RailDecrypt:
             index += 2
 
             for j in range(6):
-                temp = struct.unpack("<i", self.byteArr[index:index + 4])[0]
-                else4Info.append(temp)
+                tempF = struct.unpack("<f", self.byteArr[index:index + 4])[0]
+                tempF = round(tempF, 5)
+                else4Info.append(tempF)
                 index += 4
             self.else4List.append(else4Info)
         # unknown
@@ -744,20 +738,18 @@ class RailDecrypt:
                 newByteArr = self.byteArr[0:index]
 
                 for i in range(cnt - self.trainCnt):
-                    tempH0 = struct.pack("<h", 0)
-                    tempH1 = struct.pack("<h", 1)
-                    newByteArr.extend(tempH0)
-                    newByteArr.extend(tempH0)
-                    newByteArr.extend(tempH1)
-                    newByteArr.extend(tempH0)
-                    newByteArr.append(0)
+                    tempH = struct.pack("<h", 0)
+                    tempF = struct.pack("<f", 0)
+                    newByteArr.extend(tempH)
+                    newByteArr.extend(tempH)
+                    newByteArr.append(1)
+                    newByteArr.extend(tempF)
             else:
                 for i in range(cnt):
                     index += 2
                     index += 2
-                    index += 2
-                    index += 2
                     index += 1
+                    index += 4
                 newByteArr = self.byteArr[0:index]
 
             index = self.trainCntIdx2
@@ -784,9 +776,13 @@ class RailDecrypt:
             for i in range(len(trainList)):
                 trainInfo = trainList[i]
                 for j in range(len(trainInfo)):
-                    if j == 4:
+                    if j == 2:
                         newByteArr.append(trainInfo[j])
                         index += 1
+                    elif j == 3:
+                        tempF = struct.pack("<f", trainInfo[j])
+                        newByteArr.extend(tempF)
+                        index += 4
                     else:
                         tempH = struct.pack("<h", trainInfo[j])
                         newByteArr.extend(tempH)
@@ -1117,8 +1113,7 @@ class RailDecrypt:
                     newByteArr.extend(tempH0)
                     newByteArr.extend(tempF0)
                     newByteArr.extend(tempF0)
-                    newByteArr.extend(tempH0)
-                    newByteArr.extend(tempH0)
+                    newByteArr.extend(tempF0)
                     newByteArr.append(0)
             else:
                 for i in range(cnt):
@@ -1126,8 +1121,7 @@ class RailDecrypt:
                     index += 2
                     index += 4
                     index += 4
-                    index += 2
-                    index += 2
+                    index += 4
                     index += 1
                 newByteArr = self.byteArr[0:index]
 
@@ -1151,10 +1145,10 @@ class RailDecrypt:
             for i in range(len(valList)):
                 valInfo = valList[i]
                 for j in range(len(valInfo)):
-                    if j in [2, 3]:
+                    if j in [2, 3, 4]:
                         tempF = struct.pack("<f", valInfo[j])
                         newByteArr.extend(tempF)
-                    elif j == 6:
+                    elif j == 5:
                         newByteArr.append(valInfo[j])
                     else:
                         tempH = struct.pack("<h", valInfo[j])
@@ -1445,8 +1439,8 @@ class RailDecrypt:
                     prevRail = struct.pack("<h", -1)
                     newByteArr.extend(prevRail)
                     for j in range(6):
-                        temp = struct.pack("<i", 0)
-                        newByteArr.extend(temp)
+                        tempF = struct.pack("<f", 0)
+                        newByteArr.extend(tempF)
             else:
                 for i in range(cnt):
                     index += 2
@@ -1483,8 +1477,8 @@ class RailDecrypt:
                 newByteArr.extend(prevRail)
 
                 for j in range(6):
-                    temp = struct.pack("<i", valInfo[2 + j])
-                    newByteArr.extend(temp)
+                    tempF = struct.pack("<f", valInfo[2 + j])
+                    newByteArr.extend(tempF)
 
             index = self.ambIdx
             newByteArr.extend(self.byteArr[index:])

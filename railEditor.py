@@ -7,6 +7,7 @@ from tkinter import messagebox as mb
 from importPy.tkinterTab import tab1AllWidget, tab2AllWidget, tab3AllWidget, tab4AllWidget, tab5AllWidget, tab6AllWidget, tab7AllWidget, tab8AllWidget, tab9AllWidget, tab10AllWidget, tab11AllWidget
 import dendDecrypt.RSdecrypt as dendRs
 import dendDecrypt.CSdecrypt as dendCs
+import dendDecrypt.BSdecrypt as dendBs
 
 LS = 0
 BS = 1
@@ -31,10 +32,16 @@ def openFile():
             decryptFile = dendRs.RailDecrypt(file_path)
         elif v_radio.get() == CS:
             decryptFile = dendCs.RailDecrypt(file_path)
+        elif v_radio.get() == BS:
+            decryptFile = dendBs.RailDecrypt(file_path)
 
         if not decryptFile.open():
-            decryptFile.printError()
-            mb.showerror(title="エラー", message=errorMsg)
+            if decryptFile.error == "":
+                errorMsg = decryptFile.game + "のレールデータではありません"
+                mb.showerror(title="エラー", message=errorMsg)
+            else:
+                decryptFile.printError()
+                mb.showerror(title="エラー", message=errorMsg)
             return
 
         deleteAllWidget()
@@ -92,7 +99,7 @@ def selectGame():
 
 
 root = tkinter.Tk()
-root.title("電車でD レール改造 1.1.0")
+root.title("電車でD レール改造 1.2.0")
 root.geometry("1024x768")
 
 menubar = tkinter.Menu(root)
@@ -104,7 +111,7 @@ v_radio.set(RS)
 
 lsRb = tkinter.Radiobutton(root, text="Lightning Stage", command=selectGame, variable=v_radio, value=LS, state="disabled")
 lsRb.place(relx=0.05, rely=0.02)
-bsRb = tkinter.Radiobutton(root, text="Burning Stage", command=selectGame, variable=v_radio, value=BS, state="disabled")
+bsRb = tkinter.Radiobutton(root, text="Burning Stage", command=selectGame, variable=v_radio, value=BS)
 bsRb.place(relx=0.32, rely=0.02)
 csRb = tkinter.Radiobutton(root, text="Climax Stage", command=selectGame, variable=v_radio, value=CS)
 csRb.place(relx=0.59, rely=0.02)

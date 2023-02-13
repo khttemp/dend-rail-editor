@@ -26,12 +26,10 @@ class RailPosWidget:
         self.railNoHeaderLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
         self.railPosHeaderLb = tkinter.Label(self.railPosLf, text="railPos", font=("", 20), width=7, borderwidth=1, relief="solid")
         self.railPosHeaderLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
-        self.ele1HeaderLb = tkinter.Label(self.railPosLf, text="ele1", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele1HeaderLb.grid(row=0, column=3, sticky=tkinter.W + tkinter.E)
-        self.ele2HeaderLb = tkinter.Label(self.railPosLf, text="ele2", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele2HeaderLb.grid(row=0, column=4, sticky=tkinter.W + tkinter.E)
-        self.ele3HeaderLb = tkinter.Label(self.railPosLf, text="ele3", font=("", 20), width=5, borderwidth=1, relief="solid")
-        self.ele3HeaderLb.grid(row=0, column=5, sticky=tkinter.W + tkinter.E)
+        self.b1HeaderLb = tkinter.Label(self.railPosLf, text="b1", font=("", 20), width=5, borderwidth=1, relief="solid")
+        self.b1HeaderLb.grid(row=0, column=3, sticky=tkinter.W + tkinter.E)
+        self.f1HeaderLb = tkinter.Label(self.railPosLf, text="f1", font=("", 20), width=5, borderwidth=1, relief="solid")
+        self.f1HeaderLb.grid(row=0, column=4, sticky=tkinter.W + tkinter.E)
 
         for i in range(len(self.trainList)):
             trainInfo = self.trainList[i]
@@ -73,12 +71,16 @@ class EditRailPosWidget(sd.Dialog):
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
         self.valLb.grid(columnspan=2, row=0, column=0, sticky=tkinter.W + tkinter.E)
 
-        trainInfoLbList = ["railNo", "railPos", "ele1", "ele2", "ele3"]
+        trainInfoLbList = ["railNo", "railPos", "b1", "f1"]
         for i in range(len(self.trainInfo)):
             self.railLb = ttk.Label(master, text=trainInfoLbList[i], font=("", 14))
             self.railLb.grid(row=i + 1, column=0, sticky=tkinter.W + tkinter.E)
-            self.varRail = tkinter.IntVar()
-            self.varRail.set(self.trainInfo[i])
+            if i == 3:
+                self.varRail = tkinter.DoubleVar()
+                self.varRail.set(self.trainInfo[i])
+            else:
+                self.varRail = tkinter.IntVar()
+                self.varRail.set(self.trainInfo[i])
             self.varList.append(self.varRail)
             self.railEt = ttk.Entry(master, textvariable=self.varRail, font=("", 14))
             self.railEt.grid(row=i + 1, column=1, sticky=tkinter.W + tkinter.E)
@@ -90,15 +92,18 @@ class EditRailPosWidget(sd.Dialog):
             try:
                 try:
                     for i in range(len(self.varList)):
-                        res = int(self.varList[i].get())
-                        if res < 0:
-                            errorMsg = "0以上の数字で入力してください。"
-                            mb.showerror(title="数字エラー", message=errorMsg)
-                            return False
+                        if i == 3:
+                            res = float(self.varList[i].get())
+                        else:
+                            res = int(self.varList[i].get())
+                            if res < 0:
+                                errorMsg = "0以上の数字で入力してください。"
+                                mb.showerror(title="数字エラー", message=errorMsg)
+                                return False
                         self.resultValueList.append(res)
                     return True
                 except Exception:
-                    errorMsg = "整数で入力してください。"
+                    errorMsg = "数字で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
             except Exception:
                 errorMsg = "予想外のエラーです"

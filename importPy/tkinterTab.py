@@ -44,15 +44,16 @@ def tab1AllWidget(tabFrame, decryptFile, reloadFunc):
     railPosFrame.pack(anchor=tkinter.NW, padx=10, pady=5)
 
     railPos1Frame = ttk.Frame(railPosFrame)
-    railPos1Frame.grid(row=0, column=0, pady=3)
+    railPos1Frame.grid(sticky=tkinter.NW, row=0, column=0, pady=3)
+
     RailPosWidget(railPos1Frame, "初期配置", 0, decryptFile, decryptFile.trainList, reloadFunc)
 
     railPos2Frame = ttk.Frame(railPosFrame)
-    railPos2Frame.grid(row=1, column=0, pady=3)
+    railPos2Frame.grid(sticky=tkinter.NW, row=1, column=0, pady=3)
     RailPosWidget(railPos2Frame, "ダミー配置？", 1, decryptFile, decryptFile.trainList2, reloadFunc)
 
     railPos3Frame = ttk.Frame(railPosFrame)
-    railPos3Frame.grid(row=2, column=0, pady=3)
+    railPos3Frame.grid(sticky=tkinter.NW, row=2, column=0, pady=3)
     RailPosWidget(railPos3Frame, "試運転、二人バトル配置", 2, decryptFile, decryptFile.trainList3, reloadFunc)
 
 
@@ -66,9 +67,9 @@ def tab2AllWidget(tabFrame, decryptFile, reloadFunc):
     simpleListFrame = ttk.Frame(frame.frame)
     simpleListFrame.pack(anchor=tkinter.NW)
     SimpleListWidget(simpleListFrame, "light情報", decryptFile, decryptFile.lightList, decryptFile.lightIdx, 1, reloadFunc)
-    SimpleListWidget(simpleListFrame, "駅名標画像情報", decryptFile, decryptFile.pngList, decryptFile.pngIdx, 2, reloadFunc)
-
-    StationWidget(frame.frame, decryptFile, decryptFile.stationList, reloadFunc)
+    if decryptFile.game in ["CS", "RS"]:
+        SimpleListWidget(simpleListFrame, "駅名標画像情報", decryptFile, decryptFile.pngList, decryptFile.pngIdx, 2, reloadFunc)
+        StationWidget(frame.frame, decryptFile, decryptFile.stationList, reloadFunc)
 
     simpleListFrame2 = ttk.Frame(frame.frame)
     simpleListFrame2.pack(anchor=tkinter.NW)
@@ -94,7 +95,8 @@ def tab6AllWidget(tabFrame, decryptFile, reloadFunc):
 
 def tab7AllWidget(tabFrame, decryptFile, reloadFunc):
     ComicScriptWidget(tabFrame, decryptFile, decryptFile.comicScriptList, reloadFunc)
-    DosansenListWidget(tabFrame, decryptFile, decryptFile.dosansenList, reloadFunc)
+    if decryptFile.game in ["CS", "RS"]:
+        DosansenListWidget(tabFrame, decryptFile, decryptFile.dosansenList, reloadFunc)
 
 
 def tab8AllWidget(tabFrame, decryptFile, reloadFunc):

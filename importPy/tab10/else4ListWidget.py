@@ -56,8 +56,8 @@ class Else4ListWidget:
             rowNum += 1
 
             for j in range(6):
-                self.varTemp = tkinter.IntVar()
-                self.varTemp.set(int(else4Info[2 + j]))
+                self.varTemp = tkinter.DoubleVar()
+                self.varTemp.set(float(else4Info[2 + j]))
                 self.tempTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTemp, font=("", 20), width=7, borderwidth=1, relief="solid")
                 self.tempTextLb.grid(row=rowNum, column=j + 1, sticky=tkinter.W + tkinter.E)
             rowNum += 1
@@ -146,16 +146,20 @@ class EditElse4ListWidget(sd.Dialog):
     def body(self, master):
         self.resizable(False, False)
 
-        else4InfoLbList = ["railNo", "prevRail", "i1", "i2", "i3", "i4", "i5", "i6"]
+        else4InfoLbList = ["railNo", "prevRail", "f1", "f2", "f3", "f4", "f5", "f6"]
         for i in range(len(self.else4Info)):
             self.else4Lb = ttk.Label(master, text=else4InfoLbList[i], font=("", 14))
             self.else4Lb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
-            self.varElse4 = tkinter.IntVar()
-            self.varElse4.set(self.else4Info[i])
+            if i in [0, 1]:
+                self.varElse4 = tkinter.IntVar()
+                self.varElse4.set(self.else4Info[i])
+            else:
+                self.varElse4 = tkinter.DoubleVar()
+                self.varElse4.set(self.else4Info[i])
             self.varList.append(self.varElse4)
             self.else4Et = ttk.Entry(master, textvariable=self.varElse4, font=("", 14))
             self.else4Et.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-            if self.decryptFile.game == "CS" and i == 0:
+            if self.decryptFile.game in ["BS", "CS"] and i == 0:
                 self.else4Et["state"] = "disabled"
 
     def validate(self):
@@ -165,7 +169,10 @@ class EditElse4ListWidget(sd.Dialog):
             try:
                 try:
                     for i in range(len(self.varList)):
-                        res = int(self.varList[i].get())
+                        if i in [0, 1]:
+                            res = int(self.varList[i].get())
+                        else:
+                            res = float(self.varList[i].get())
                         self.resultValueList.append(res)
                     return True
                 except Exception:

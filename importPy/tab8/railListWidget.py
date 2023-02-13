@@ -1,4 +1,5 @@
 import os
+import copy
 
 import tkinter
 from tkinter import ttk
@@ -361,40 +362,48 @@ class RailListWidget:
                     rail = int(arr[15 + i])
                     railInfo.append(rail)
 
-                if self.decryptFile.game == "CS":
+                if self.decryptFile.game in ["BS", "CS"]:
                     endcnt = int(arr[15 + rail_data * readCount])
-                    railInfo.append(endcnt)
-
+                    copyElse3List = []
                     if endcnt > 0:
                         if int(arr[0]) < len(self.decryptFile.railList):
                             originRailInfo = self.decryptFile.railList[int(arr[0])]
                             originRailData = originRailInfo[14]
                             originEndcntIndex = 15 + originRailData * readCount
-                            originEndcnt = originRailInfo[originEndcntIndex]
+                            originElse3List = originRailInfo[originEndcntIndex]
+                            copyElse3List = copy.deepcopy(originElse3List)
+                            copyElse3List[0] = endcnt
 
                             for i in range(endcnt):
-                                if i >= originEndcnt:
+                                if i >= originElse3List[0]:
                                     for j in range(8):
-                                        railInfo.append(0)
-                                else:
-                                    endStartIdx = originEndcntIndex + 1 + i * 8
-                                    railInfo.extend(originRailInfo[endStartIdx:endStartIdx + 8])
+                                        copyElse3List.append(0)
                         else:
                             for i in range(endcnt):
                                 for j in range(8):
-                                    railInfo.append(0)
+                                    copyElse3List.append(0)
+                    railInfo.append(copyElse3List)
 
+                    else4Info = []
                     if prev_rail == -1:
                         originRailInfo = self.decryptFile.railList[int(arr[0])]
                         originPrevRail = originRailInfo[1]
                         if originPrevRail == -1:
-                            else4Info = originRailInfo[-7:]
-                            railInfo.extend(else4Info)
+                            originRailData = originRailInfo[14]
+                            originElse4Index = 16 + originRailData * readCount
+                            else4Info = originRailInfo[originElse4Index]
                         else:
-                            railInfo.append(-1)
+                            else4Info.append(-1)
                             for i in range(6):
-                                railInfo.append(0)
+                                else4Info.append(0)
+                    railInfo.append(else4Info)
 
+                    if self.decryptFile.game == "BS":
+                        originRailInfo = self.decryptFile.railList[int(arr[0])]
+                        originRailData = originRailInfo[14]
+                        ambListIndex = 17 + originRailData * readCount
+                        ambList = originRailInfo[ambListIndex]
+                        railInfo.append(ambList)
                 railList.append(railInfo)
                 count += 1
 

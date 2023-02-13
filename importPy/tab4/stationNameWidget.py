@@ -58,44 +58,68 @@ class StationNameWidget:
 
         self.treeviewFrame = ScrollbarTreeview(self.treeFrame, rowNum, self.v_select, btnList)
 
-        col_tuple = ("番号", "駅名", "駅フラグ", "レールNo", "f1", "f2", "f3", "e1", "e2", "e3", "e4")
+        if self.decryptFile.game in ["CS", "RS"]:
+            col_tuple = ("番号", "駅名", "駅フラグ", "レールNo", "f1", "f2", "f3", "e1", "e2", "e3", "e4")
 
-        self.treeviewFrame.tree['columns'] = col_tuple
-        self.treeviewFrame.tree.column("#0", width=0, stretch=False)
-        self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
-        self.treeviewFrame.tree.column("駅名", anchor=tkinter.CENTER, width=130)
-        self.treeviewFrame.tree.column("駅フラグ", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("f1", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("f2", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("f3", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("e1", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("e2", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("e3", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("e4", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("駅名", anchor=tkinter.CENTER, width=130)
+            self.treeviewFrame.tree.column("駅フラグ", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f2", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f3", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("e1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("e2", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("e3", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("e4", anchor=tkinter.CENTER, width=50)
 
-        self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("駅名", text="駅名", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("駅フラグ", text="駅フラグ", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("f1", text="f1", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("f2", text="f2", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("f3", text="f3", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("e1", text="e1", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("e2", text="e2", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("e3", text="e3", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("e4", text="e4", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅名", text="駅名", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅フラグ", text="駅フラグ", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f1", text="f1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f2", text="f2", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f3", text="f3", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("e1", text="e1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("e2", text="e2", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("e3", text="e3", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("e4", text="e4", anchor=tkinter.CENTER)
 
-        self.treeviewFrame.tree["displaycolumns"] = col_tuple
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
 
-        index = 0
-        for stNameInfo in self.stationNameList:
-            data = (index,)
-            data += (stNameInfo[0], stNameInfo[1], stNameInfo[2])
-            data += (round(float(stNameInfo[3]), 3), round(float(stNameInfo[4]), 3), round(float(stNameInfo[5]), 3))
-            data += (stNameInfo[6], stNameInfo[7], stNameInfo[8], stNameInfo[9])
-            self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
-            index += 1
+            index = 0
+            for stNameInfo in self.stationNameList:
+                data = (index,)
+                data += (stNameInfo[0], stNameInfo[1], stNameInfo[2])
+                data += (round(float(stNameInfo[3]), 3), round(float(stNameInfo[4]), 3), round(float(stNameInfo[5]), 3))
+                data += (stNameInfo[6], stNameInfo[7], stNameInfo[8], stNameInfo[9])
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
+        elif self.decryptFile.game == "BS":
+            col_tuple = ("番号", "駅名", "駅フラグ", "レールNo")
+
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("駅名", anchor=tkinter.CENTER, width=130)
+            self.treeviewFrame.tree.column("駅フラグ", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
+
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅名", text="駅名", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅フラグ", text="駅フラグ", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
+
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
+
+            index = 0
+            for stNameInfo in self.stationNameList:
+                data = (index,)
+                data += (stNameInfo[0], stNameInfo[1], stNameInfo[2])
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
 
     def editLine(self):
         selectId = self.treeviewFrame.tree.selection()[0]
@@ -276,7 +300,7 @@ class PasteStationNameDialog(sd.Dialog):
             self.decryptFile.printError()
             mb.showerror(title="エラー", message="予想外のエラーが発生しました")
             return
-        mb.showinfo(title="成功", message="stationName情報を修正しました")
+        mb.showinfo(title="成功", message="駅名位置情報を修正しました")
         self.reloadFlag = True
 
     def backInsert(self):
@@ -285,5 +309,5 @@ class PasteStationNameDialog(sd.Dialog):
             self.decryptFile.printError()
             mb.showerror(title="エラー", message="予想外のエラーが発生しました")
             return
-        mb.showinfo(title="成功", message="stationName情報を修正しました")
+        mb.showinfo(title="成功", message="駅名位置情報を修正しました")
         self.reloadFlag = True

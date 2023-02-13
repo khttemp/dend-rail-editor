@@ -119,10 +119,8 @@ class EditComicScriptListWidget(sd.Dialog):
         self.valLb = ttk.Label(master, text="値を入力してください", font=("", 14))
         self.valLb.grid(columnspan=2, row=0, column=0, sticky=tkinter.W + tkinter.E)
 
-        self.comicScriptInfo = self.comicScriptList[self.index]
-
         self.comicScriptLb = ["スクリプトNo", "イベントタイプ", "レールNo"]
-        for i in range(len(self.comicScriptInfo)):
+        for i in range(len(self.comicScriptLb)):
             self.tempNameLb = ttk.Label(master, text=self.comicScriptLb[i], font=("", 12), width=12)
             self.tempNameLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
             self.varTemp = tkinter.IntVar()
@@ -130,6 +128,7 @@ class EditComicScriptListWidget(sd.Dialog):
             self.txtEt = ttk.Entry(master, textvariable=self.varTemp, font=("", 14))
             self.txtEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
             if self.mode == "modify":
+                self.comicScriptInfo = self.comicScriptList[self.index]
                 self.varTemp.set(self.comicScriptInfo[i])
 
         if self.mode == "insert":

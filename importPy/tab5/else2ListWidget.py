@@ -38,7 +38,7 @@ class Else2ListWidget:
         for i in range(len(self.else2List)):
             else2Info = self.else2List[i]
             for j in range(len(else2Info)):
-                if j in [2, 3]:
+                if j in [2, 3, 4]:
                     self.varTempF = tkinter.DoubleVar()
                     self.varTempF.set(round(float(else2Info[j]), 3))
                     self.tempfTextLb = tkinter.Label(self.txtFrame2, textvariable=self.varTempF, font=("", 20), width=7, borderwidth=1, relief="solid")
@@ -136,11 +136,11 @@ class EditElse2ListWidget(sd.Dialog):
     def body(self, master):
         self.resizable(False, False)
 
-        else2InfoLbList = ["e1", "e2", "f1", "f2", "e3", "e4", "e5"]
+        else2InfoLbList = ["e1", "e2", "f1", "f2", "f3", "e3"]
         for i in range(len(self.else2Info)):
             self.else2Lb = ttk.Label(master, text=else2InfoLbList[i], font=("", 14))
             self.else2Lb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
-            if i in [2, 3]:
+            if i in [2, 3, 4]:
                 self.varElse2 = tkinter.DoubleVar()
                 self.varElse2.set(round(float(self.else2Info[i]), 3))
             else:
@@ -157,7 +157,7 @@ class EditElse2ListWidget(sd.Dialog):
             try:
                 try:
                     for i in range(len(self.varList)):
-                        if i in [2, 3]:
+                        if i in [2, 3, 4]:
                             res = float(self.varList[i].get())
                         else:
                             res = int(self.varList[i].get())
