@@ -8,6 +8,7 @@ from importPy.tkinterTab import tab1AllWidget, tab2AllWidget, tab3AllWidget, tab
 import dendDecrypt.RSdecrypt as dendRs
 import dendDecrypt.CSdecrypt as dendCs
 import dendDecrypt.BSdecrypt as dendBs
+import dendDecrypt.LSdecrypt as dendLs
 
 LS = 0
 BS = 1
@@ -34,6 +35,8 @@ def openFile():
             decryptFile = dendCs.RailDecrypt(file_path)
         elif v_radio.get() == BS:
             decryptFile = dendBs.RailDecrypt(file_path)
+        elif v_radio.get() == LS:
+            decryptFile = dendLs.RailDecrypt(file_path)
 
         if not decryptFile.open():
             if decryptFile.error == "":
@@ -45,6 +48,10 @@ def openFile():
             return
 
         deleteAllWidget()
+        if v_radio.get() == LS:
+            cb["values"] = lsInfo
+        else:
+            cb["values"] = info
         cb.current(0)
         cb["state"] = "readonly"
         selectInfo(cb.current())
@@ -99,7 +106,7 @@ def selectGame():
 
 
 root = tkinter.Tk()
-root.title("電車でD レール改造 1.2.0")
+root.title("電車でD レール改造 1.3.0")
 root.geometry("1024x768")
 
 menubar = tkinter.Menu(root)
@@ -109,7 +116,7 @@ root.config(menu=menubar)
 v_radio = tkinter.IntVar()
 v_radio.set(RS)
 
-lsRb = tkinter.Radiobutton(root, text="Lightning Stage", command=selectGame, variable=v_radio, value=LS, state="disabled")
+lsRb = tkinter.Radiobutton(root, text="Lightning Stage", command=selectGame, variable=v_radio, value=LS)
 lsRb.place(relx=0.05, rely=0.02)
 bsRb = tkinter.Radiobutton(root, text="Burning Stage", command=selectGame, variable=v_radio, value=BS)
 bsRb.place(relx=0.32, rely=0.02)
@@ -133,6 +140,20 @@ info = [
     "Comic Script、土讃線",
     "レール情報",
     "要素3",
+    "要素4",
+    "AMB情報"
+]
+
+lsInfo = [
+    "BGM、配置情報",
+    "要素1",
+    "smf情報",
+    "駅名位置情報",
+    "要素2",
+    "CPU情報",
+    "Comic Script、土讃線",
+    "レール情報",
+    "Cam",
     "要素4",
     "AMB情報"
 ]

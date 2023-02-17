@@ -26,8 +26,9 @@ class BinAnimeListWidget:
         self.binAnimeCntTextLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
         self.binAnimeCntLb = tkinter.Label(self.txtFrame, textvariable=self.varBinAnimeCnt, font=("", 20), width=7, borderwidth=1, relief="solid")
         self.binAnimeCntLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
-        self.binAnimeCntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editBinAnimeCnt(self.varBinAnimeCnt.get()))
-        self.binAnimeCntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            self.binAnimeCntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editBinAnimeCnt(self.varBinAnimeCnt.get()))
+            self.binAnimeCntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
 
         self.txtFrame2 = ttk.Frame(self.eleLf)
         self.txtFrame2.pack(anchor=tkinter.NW, pady=5)
@@ -154,8 +155,7 @@ class EditBinAnimeWidget(sd.Dialog):
                 except Exception:
                     errorMsg = "整数で入力してください。"
                     mb.showerror(title="数字エラー", message=errorMsg)
-            except Exception as e:
-                print(e)
+            except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)
 

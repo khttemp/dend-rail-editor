@@ -14,7 +14,7 @@ class CpuWidget:
         self.reloadFunc = reloadFunc
         self.copyCpuInfo = []
         self.cpuLf = ttk.LabelFrame(self.frame, text="cpu情報")
-        self.cpuLf.pack(anchor=tkinter.NW, padx=10, pady=5)
+        self.cpuLf.pack(anchor=tkinter.NW, padx=10, pady=5, fill=tkinter.X)
 
         self.headerFrame = ttk.Frame(self.cpuLf)
         self.headerFrame.pack()
@@ -58,38 +58,80 @@ class CpuWidget:
 
         self.treeviewFrame = ScrollbarTreeview(self.treeFrame, rowNum, self.v_select, btnList)
 
-        col_tuple = ("番号", "レールNo", "const1", "mode", "minLen", "maxLen", "maxSpeed", "minSpeed")
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            col_tuple = ("番号", "レールNo", "const1", "mode", "minLen", "maxLen", "maxSpeed", "minSpeed")
 
-        self.treeviewFrame.tree['columns'] = col_tuple
-        self.treeviewFrame.tree.column("#0", width=0, stretch=False)
-        self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
-        self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("const1", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("mode", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("minLen", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("maxLen", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("maxSpeed", anchor=tkinter.CENTER, width=50)
-        self.treeviewFrame.tree.column("minSpeed", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("const1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("mode", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("minLen", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("maxLen", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("maxSpeed", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("minSpeed", anchor=tkinter.CENTER, width=50)
 
-        self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("const1", text="const1", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("mode", text="mode", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("minLen", text="minLen", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("maxLen", text="maxLen", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("maxSpeed", text="maxSpeed", anchor=tkinter.CENTER)
-        self.treeviewFrame.tree.heading("minSpeed", text="minSpeed", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("const1", text="const1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("mode", text="mode", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("minLen", text="minLen", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("maxLen", text="maxLen", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("maxSpeed", text="maxSpeed", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("minSpeed", text="minSpeed", anchor=tkinter.CENTER)
 
-        self.treeviewFrame.tree["displaycolumns"] = col_tuple
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
 
-        index = 0
-        for cpuInfo in self.cpuList:
-            data = (index,)
-            data += (cpuInfo[0], cpuInfo[1], cpuInfo[2])
-            data += (round(float(cpuInfo[3]), 3), round(float(cpuInfo[4]), 3))
-            data += (round(float(cpuInfo[5]), 3), round(float(cpuInfo[6]), 3))
-            self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
-            index += 1
+            index = 0
+            for cpuInfo in self.cpuList:
+                data = (index,)
+                data += (cpuInfo[0], cpuInfo[1], cpuInfo[2])
+                data += (cpuInfo[3], cpuInfo[4])
+                data += (cpuInfo[5], cpuInfo[6])
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
+        else:
+            col_tuple = ("番号", "レールNo", "list1", "const1", "mode", "minLen", "maxLen", "maxSpeed", "minSpeed", "defSpeed", "list2")
+
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("list1", anchor=tkinter.CENTER, width=100)
+            self.treeviewFrame.tree.column("const1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("mode", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("minLen", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("maxLen", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("maxSpeed", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("minSpeed", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("defSpeed", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("list2", anchor=tkinter.CENTER, width=100)
+
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("list1", text="list1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("const1", text="const1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("mode", text="mode", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("minLen", text="minLen", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("maxLen", text="maxLen", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("maxSpeed", text="maxSpeed", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("minSpeed", text="minSpeed", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("defSpeed", text="defSpeed", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("list2", text="list2", anchor=tkinter.CENTER)
+
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
+
+            index = 0
+            for cpuInfo in self.cpuList:
+                data = (index,)
+                data += (cpuInfo[0], )
+                data += (",".join(map(str, cpuInfo[1])), )
+                data += (cpuInfo[2], cpuInfo[3])
+                data += (cpuInfo[4], cpuInfo[5], cpuInfo[6], cpuInfo[7], cpuInfo[8])
+                data += (",".join(map(str, cpuInfo[9])), )
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
 
     def editLine(self):
         selectId = self.treeviewFrame.tree.selection()[0]
@@ -140,12 +182,23 @@ class CpuWidget:
         cpuInfoKeyList = list(selectItem.keys())
         cpuInfoKeyList.pop(0)
         copyList = []
-        for i in range(len(cpuInfoKeyList)):
-            key = cpuInfoKeyList[i]
-            if i in [3, 4, 5, 6]:
-                copyList.append(float(selectItem[key]))
-            else:
-                copyList.append(int(selectItem[key]))
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            for i in range(len(cpuInfoKeyList)):
+                key = cpuInfoKeyList[i]
+                if i in [3, 4, 5, 6]:
+                    copyList.append(float(selectItem[key]))
+                else:
+                    copyList.append(int(selectItem[key]))
+        else:
+            for i in range(len(cpuInfoKeyList)):
+                key = cpuInfoKeyList[i]
+                if i in [0, 2, 3]:
+                    copyList.append(int(selectItem[key]))
+                elif i in [1, 9]:
+                    tempList = [float(x) for x in selectItem[key].split(",")]
+                    copyList.append(tempList)
+                else:
+                    copyList.append(float(selectItem[key]))
         self.copyCpuInfo = copyList
         mb.showinfo(title="成功", message="コピーしました")
         self.pasteLineBtn["state"] = "normal"
@@ -175,23 +228,63 @@ class EditCpuListWidget(sd.Dialog):
 
         cpuInfoKeyList = list(self.cpuInfo.keys())
         cpuInfoKeyList.pop(0)
-        for i in range(len(cpuInfoKeyList)):
-            self.cpuInfoLb = ttk.Label(master, text=cpuInfoKeyList[i], font=("", 14))
-            self.cpuInfoLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
-            if i in [3, 4, 5, 6]:
-                self.varCpuInfo = tkinter.DoubleVar()
-                self.varList.append(self.varCpuInfo)
-                self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
-                self.cpuInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-                if self.mode == "modify":
-                    self.varCpuInfo.set(round(float(self.cpuInfo[cpuInfoKeyList[i]]), 3))
-            else:
-                self.varCpuInfo = tkinter.IntVar()
-                self.varList.append(self.varCpuInfo)
-                self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
-                self.cpuInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-                if self.mode == "modify":
-                    self.varCpuInfo.set(self.cpuInfo[cpuInfoKeyList[i]])
+
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            for i in range(len(cpuInfoKeyList)):
+                self.cpuInfoLb = ttk.Label(master, text=cpuInfoKeyList[i], font=("", 14))
+                self.cpuInfoLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
+                if i in [3, 4, 5, 6]:
+                    self.varCpuInfo = tkinter.DoubleVar()
+                    self.varList.append(self.varCpuInfo)
+                    self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
+                    self.cpuInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varCpuInfo.set(round(float(self.cpuInfo[cpuInfoKeyList[i]]), 3))
+                else:
+                    self.varCpuInfo = tkinter.IntVar()
+                    self.varList.append(self.varCpuInfo)
+                    self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
+                    self.cpuInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varCpuInfo.set(self.cpuInfo[cpuInfoKeyList[i]])
+        else:
+            rowNum = 0
+            colNum = 0
+            for i in range(len(cpuInfoKeyList)):
+                if i in [0, 2, 3]:
+                    self.cpuInfoLb = ttk.Label(master, text=cpuInfoKeyList[i], font=("", 14))
+                    self.cpuInfoLb.grid(row=rowNum, column=2 * colNum, sticky=tkinter.W + tkinter.E)
+                    self.varCpuInfo = tkinter.IntVar()
+                    self.varList.append(self.varCpuInfo)
+                    self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
+                    self.cpuInfoEt.grid(row=rowNum, column=2 * colNum + 1, sticky=tkinter.W + tkinter.E)
+                    rowNum += 1
+                    if self.mode == "modify":
+                        self.varCpuInfo.set(self.cpuInfo[cpuInfoKeyList[i]])
+                elif i in [1, 9]:
+                    tempList = [float(x) for x in self.cpuInfo[cpuInfoKeyList[i]].split(",")]
+                    for j in range(len(tempList)):
+                        self.cpuInfoLb = ttk.Label(master, text="list{0}-{1}".format(colNum + 1, j), font=("", 14))
+                        self.cpuInfoLb.grid(row=rowNum, column=2 * colNum, sticky=tkinter.W + tkinter.E)
+                        self.varCpuInfo = tkinter.DoubleVar()
+                        self.varList.append(self.varCpuInfo)
+                        self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
+                        self.cpuInfoEt.grid(row=rowNum, column=2 * colNum + 1, sticky=tkinter.W + tkinter.E)
+                        rowNum += 1
+                        if self.mode == "modify":
+                            self.varCpuInfo.set(tempList[j])
+                    colNum += 1
+                    rowNum = 0
+                else:
+                    self.cpuInfoLb = ttk.Label(master, text=cpuInfoKeyList[i], font=("", 14))
+                    self.cpuInfoLb.grid(row=rowNum, column=2 * colNum, sticky=tkinter.W + tkinter.E)
+                    self.varCpuInfo = tkinter.DoubleVar()
+                    self.varList.append(self.varCpuInfo)
+                    self.cpuInfoEt = ttk.Entry(master, textvariable=self.varCpuInfo, font=("", 14))
+                    self.cpuInfoEt.grid(row=rowNum, column=2 * colNum + 1, sticky=tkinter.W + tkinter.E)
+                    rowNum += 1
+                    if self.mode == "modify":
+                        self.varCpuInfo.set(self.cpuInfo[cpuInfoKeyList[i]])
 
         if self.mode == "insert":
             self.setInsertWidget(master, len(cpuInfoKeyList))
@@ -212,20 +305,40 @@ class EditCpuListWidget(sd.Dialog):
         result = mb.askokcancel(title="確認", message="この値で修正しますか？", parent=self)
         if result:
             try:
-                try:
+                if self.decryptFile.game in ["BS", "CS", "RS"]:
                     for i in range(len(self.varList)):
-                        if i in [3, 4, 5, 6]:
-                            res = float(self.varList[i].get())
-                        else:
-                            res = int(self.varList[i].get())
-                        self.resultValueList.append(res)
-                    if self.mode == "insert":
-                        self.insert = self.insertCb.current()
-
-                    return True
-                except Exception:
-                    errorMsg = "整数で入力してください。"
-                    mb.showerror(title="数字エラー", message=errorMsg)
+                        try:
+                            if i in [3, 4, 5, 6]:
+                                res = float(self.varList[i].get())
+                            else:
+                                res = int(self.varList[i].get())
+                            self.resultValueList.append(res)
+                        except Exception:
+                            errorMsg = "整数で入力してください。"
+                            mb.showerror(title="数字エラー", message=errorMsg)
+                else:
+                    tempList = []
+                    tempList2 = []
+                    for i in range(len(self.varList)):
+                        try:
+                            if i in [0, 7, 8]:
+                                res = int(self.varList[i].get())
+                                self.resultValueList.append(res)
+                            elif i in [1, 2, 3, 4, 5, 6]:
+                                tempList.append(float(self.varList[i].get()))
+                            elif i in [9, 10, 11, 12, 13]:
+                                res = float(self.varList[i].get())
+                                self.resultValueList.append(res)
+                            elif i in [14, 15, 16]:
+                                tempList2.append(float(self.varList[i].get()))
+                        except Exception:
+                            errorMsg = "整数で入力してください。"
+                            mb.showerror(title="数字エラー", message=errorMsg)
+                    self.resultValueList.insert(1, tempList)
+                    self.resultValueList.append(tempList2)
+                if self.mode == "insert":
+                    self.insert = self.insertCb.current()
+                return True
             except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)

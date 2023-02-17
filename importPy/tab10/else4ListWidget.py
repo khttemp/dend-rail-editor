@@ -161,6 +161,8 @@ class EditElse4ListWidget(sd.Dialog):
             self.else4Et.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
             if self.decryptFile.game in ["BS", "CS"] and i == 0:
                 self.else4Et["state"] = "disabled"
+            elif self.decryptFile.game == "LS" and i in [0, 1]:
+                self.else4Et["state"] = "disabled"
 
     def validate(self):
         self.resultValueList = []

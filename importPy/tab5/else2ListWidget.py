@@ -29,8 +29,10 @@ class Else2ListWidget:
         self.varElse2Cnt.set(len(self.else2List))
         self.else2CntTextLb = tkinter.Label(self.txtFrame, textvariable=self.varElse2Cnt, font=("", 20), width=7, borderwidth=1, relief="solid")
         self.else2CntTextLb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E)
-        self.else2CntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editElse2Cnt(self.varElse2Cnt.get()))
-        self.else2CntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
+
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            self.else2CntBtn = tkinter.Button(self.txtFrame, text="修正", font=("", 14), command=lambda: self.editElse2Cnt(self.varElse2Cnt.get()))
+            self.else2CntBtn.grid(row=0, column=2, sticky=tkinter.W + tkinter.E)
 
         self.txtFrame2 = ttk.Frame(scrollbarFrame.frame)
         self.txtFrame2.pack(anchor=tkinter.NW, pady=5)

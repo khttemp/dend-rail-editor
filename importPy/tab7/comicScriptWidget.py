@@ -32,7 +32,10 @@ class ComicScriptWidget:
 
         copyComicScriptList = self.setListboxInfo(self.comicScriptList)
         self.v_comicScriptList = tkinter.StringVar(value=copyComicScriptList)
-        self.comicScriptListListbox = tkinter.Listbox(self.listFrame, selectmode="single", height=25, font=("", 14), width=25, listvariable=self.v_comicScriptList)
+        listWidth = 25
+        if self.decryptFile.game == "LS":
+            listWidth = 80
+        self.comicScriptListListbox = tkinter.Listbox(self.listFrame, selectmode="single", height=25, font=("", 14), width=listWidth, listvariable=self.v_comicScriptList)
         self.comicScriptListListbox.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
         self.comicScriptListListbox.bind("<<ListboxSelect>>", lambda e: self.buttonActive(self.comicScriptListListbox, self.comicScriptListListbox.curselection()))
 
@@ -58,7 +61,10 @@ class ComicScriptWidget:
         if len(copyComicScriptList) > 0:
             for i in range(len(copyComicScriptList)):
                 comicScriptInfo = copyComicScriptList[i]
-                copyComicScriptList[i] = "{0:02d}→{1}, [{2}, {3}]".format(i, comicScriptInfo[0], comicScriptInfo[1], comicScriptInfo[2])
+                if self.decryptFile.game in ["BS", "CS", "RS"]:
+                    copyComicScriptList[i] = "{0:02d}→{1}, [{2}, {3}]".format(i, comicScriptInfo[0], comicScriptInfo[1], comicScriptInfo[2])
+                else:
+                    copyComicScriptList[i] = "{0:02d}→{1}, [{2}, {3}], {4}".format(i, comicScriptInfo[0], comicScriptInfo[1], comicScriptInfo[2], comicScriptInfo[3])
         else:
             copyComicScriptList = ["(なし)"]
 
@@ -120,8 +126,9 @@ class EditComicScriptListWidget(sd.Dialog):
         self.valLb.grid(columnspan=2, row=0, column=0, sticky=tkinter.W + tkinter.E)
 
         self.comicScriptLb = ["スクリプトNo", "イベントタイプ", "レールNo"]
+
         for i in range(len(self.comicScriptLb)):
-            self.tempNameLb = ttk.Label(master, text=self.comicScriptLb[i], font=("", 12), width=12)
+            self.tempNameLb = ttk.Label(master, text=self.comicScriptLb[i], font=("", 12), width=15)
             self.tempNameLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
             self.varTemp = tkinter.IntVar()
             self.varList.append(self.varTemp)
@@ -131,8 +138,26 @@ class EditComicScriptListWidget(sd.Dialog):
                 self.comicScriptInfo = self.comicScriptList[self.index]
                 self.varTemp.set(self.comicScriptInfo[i])
 
+        if self.decryptFile.game == "LS":
+            self.xLine = ttk.Separator(master, orient=tkinter.HORIZONTAL)
+            self.xLine.grid(row=len(self.comicScriptLb), column=0, columnspan=2, sticky=tkinter.W + tkinter.E, pady=10)
+
+            for i in range(9):
+                self.tempNameLb = ttk.Label(master, text="f{0}".format(i + 1), font=("", 12), width=15)
+                self.tempNameLb.grid(row=len(self.comicScriptLb) + i + 1, column=0, sticky=tkinter.W + tkinter.E)
+                self.varTemp = tkinter.IntVar()
+                self.varList.append(self.varTemp)
+                self.txtEt = ttk.Entry(master, textvariable=self.varTemp, font=("", 14))
+                self.txtEt.grid(row=len(self.comicScriptLb) + i + 1, column=1, sticky=tkinter.W + tkinter.E)
+                if self.mode == "modify":
+                    self.comicScriptInfo = self.comicScriptList[self.index]
+                    self.varTemp.set(self.comicScriptInfo[3][i])
+
         if self.mode == "insert":
-            self.setInsertWidget(master, len(self.comicScriptLb))
+            if self.decryptFile.game in ["BS", "CS", "RS"]:
+                self.setInsertWidget(master, len(self.comicScriptLb))
+            else:
+                self.setInsertWidget(master, len(self.comicScriptLb) + 10)
 
     def setInsertWidget(self, master, index):
         self.xLine = ttk.Separator(master, orient=tkinter.HORIZONTAL)
@@ -151,14 +176,29 @@ class EditComicScriptListWidget(sd.Dialog):
 
         if result:
             try:
-                for i in range(len(self.varList)):
-                    try:
-                        res = int(self.varList[i].get())
-                    except Exception:
-                        errorMsg = "整数で入力してください"
-                        mb.showerror(title="エラー", message=errorMsg)
-                        return False
-                    self.resultValueList.append(res)
+                if self.decryptFile.game in ["BS", "CS", "RS"]:
+                    for i in range(len(self.varList)):
+                        try:
+                            res = int(self.varList[i].get())
+                        except Exception:
+                            errorMsg = "整数で入力してください"
+                            mb.showerror(title="エラー", message=errorMsg)
+                            return False
+                        self.resultValueList.append(res)
+                else:
+                    tempList = []
+                    for i in range(len(self.varList)):
+                        try:
+                            if i in [0, 1, 2]:
+                                res = int(self.varList[i].get())
+                                self.resultValueList.append(res)
+                            else:
+                                tempList.append(float(self.varList[i].get()))
+                        except Exception:
+                            errorMsg = "数字で入力してください"
+                            mb.showerror(title="エラー", message=errorMsg)
+                            return False
+                    self.resultValueList.append(tempList)
 
                 if self.mode == "insert":
                     self.insert = self.insertCb.current()

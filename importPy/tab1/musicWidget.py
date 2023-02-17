@@ -112,10 +112,12 @@ class EditMusicList(sd.Dialog):
 
         self.modifyBtn = tkinter.Button(self.btnFrame, font=("", 14), text="修正", state="disabled", command=self.modify)
         self.modifyBtn.grid(padx=10, row=0, column=0, sticky=tkinter.W + tkinter.E)
-        self.insertBtn = tkinter.Button(self.btnFrame, font=("", 14), text="挿入", state="disabled", command=self.insert)
-        self.insertBtn.grid(padx=10, row=0, column=1, sticky=tkinter.W + tkinter.E)
-        self.deleteBtn = tkinter.Button(self.btnFrame, font=("", 14), text="削除", state="disabled", command=self.delete)
-        self.deleteBtn.grid(padx=10, row=0, column=2, sticky=tkinter.W + tkinter.E)
+
+        if self.decryptFile.game != "LS":
+            self.insertBtn = tkinter.Button(self.btnFrame, font=("", 14), text="挿入", state="disabled", command=self.insert)
+            self.insertBtn.grid(padx=10, row=0, column=1, sticky=tkinter.W + tkinter.E)
+            self.deleteBtn = tkinter.Button(self.btnFrame, font=("", 14), text="削除", state="disabled", command=self.delete)
+            self.deleteBtn.grid(padx=10, row=0, column=2, sticky=tkinter.W + tkinter.E)
 
         self.listFrame = ttk.Frame(self.frame)
         self.listFrame.pack()
@@ -134,13 +136,16 @@ class EditMusicList(sd.Dialog):
             return
         self.selectIndexNum = value[0]
 
-        if listbox.get(value[0]) == "(なし)":
-            self.modifyBtn["state"] = "disabled"
-            self.deleteBtn["state"] = "disabled"
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            if listbox.get(value[0]) == "(なし)":
+                self.modifyBtn["state"] = "disabled"
+                self.deleteBtn["state"] = "disabled"
+            else:
+                self.modifyBtn["state"] = "normal"
+                self.deleteBtn["state"] = "normal"
+            self.insertBtn["state"] = "normal"
         else:
             self.modifyBtn["state"] = "normal"
-            self.deleteBtn["state"] = "normal"
-        self.insertBtn["state"] = "normal"
 
     def setListboxInfo(self, musicList):
         copyMusicList = copy.deepcopy(musicList)

@@ -17,11 +17,13 @@ class RailListWidget:
         self.varRevRailList = []
         self.reloadFunc = reloadFunc
 
-        self.smfList.extend(["なし", "モデル設定通り"])
+        if self.decryptFile.game in ["CS", "RS"]:
+            self.smfList.extend(["なし", "モデル設定通り"])
+        elif self.decryptFile.game in ["LS", "BS"]:
+            self.smfList.extend(["なし"])
 
-        #
         self.railNoFrame = ttk.Frame(self.frame)
-        self.railNoFrame.pack(anchor=tkinter.NW, padx=30, pady=30)
+        self.railNoFrame.pack(anchor=tkinter.NW, padx=30, pady=30, fill=tkinter.X)
         self.railNoLb = ttk.Label(self.railNoFrame, text="レールNo", font=("", 14))
         self.railNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E)
         self.v_railNo = tkinter.IntVar()
@@ -37,69 +39,184 @@ class RailListWidget:
         self.sidePackFrame = ttk.Frame(self.frame)
         self.sidePackFrame.pack(anchor=tkinter.NW, padx=20)
 
-        #
-        self.blockFrameLf = ttk.LabelFrame(self.sidePackFrame, text="ブロック情報")
-        self.blockFrameLf.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
-        self.prevRailLb = ttk.Label(self.blockFrameLf, text="繋げるレールNo", font=("", 14))
-        self.prevRailLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_prevRail = tkinter.IntVar()
-        self.prevRailEt = ttk.Entry(self.blockFrameLf, textvariable=self.v_prevRail, font=("", 14), width=7, justify="center", state="readonly")
-        self.prevRailEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            #
+            self.blockFrameLf = ttk.LabelFrame(self.sidePackFrame, text="ブロック情報")
+            self.blockFrameLf.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.prevRailLb = ttk.Label(self.blockFrameLf, text="繋げるレールNo", font=("", 14))
+            self.prevRailLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_prevRail = tkinter.IntVar()
+            self.prevRailEt = ttk.Entry(self.blockFrameLf, textvariable=self.v_prevRail, font=("", 14), width=7, justify="center", state="readonly")
+            self.prevRailEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.blockLb = ttk.Label(self.blockFrameLf, text="ブロックNo", font=("", 14))
-        self.blockLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_block = tkinter.IntVar()
-        self.blockEt = ttk.Entry(self.blockFrameLf, textvariable=self.v_block, font=("", 14), width=7, justify="center", state="readonly")
-        self.blockEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.blockLb = ttk.Label(self.blockFrameLf, text="ブロックNo", font=("", 14))
+            self.blockLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_block = tkinter.IntVar()
+            self.blockEt = ttk.Entry(self.blockFrameLf, textvariable=self.v_block, font=("", 14), width=7, justify="center", state="readonly")
+            self.blockEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        #
-        self.xyzFrame = ttk.LabelFrame(self.sidePackFrame, text="向きXYZ情報")
-        self.xyzFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
-        self.xLb = ttk.Label(self.xyzFrame, text="xの向き", font=("", 14))
-        self.xLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_x = tkinter.DoubleVar()
-        self.xEt = ttk.Entry(self.xyzFrame, textvariable=self.v_x, font=("", 14), width=7, justify="center", state="readonly")
-        self.xEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            #
+            self.xyzFrame = ttk.LabelFrame(self.sidePackFrame, text="向きXYZ情報")
+            self.xyzFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.xLb = ttk.Label(self.xyzFrame, text="xの向き", font=("", 14))
+            self.xLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_x = tkinter.DoubleVar()
+            self.xEt = ttk.Entry(self.xyzFrame, textvariable=self.v_x, font=("", 14), width=7, justify="center", state="readonly")
+            self.xEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.yLb = ttk.Label(self.xyzFrame, text="yの向き", font=("", 14))
-        self.yLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_y = tkinter.DoubleVar()
-        self.yEt = ttk.Entry(self.xyzFrame, textvariable=self.v_y, font=("", 14), width=7, justify="center", state="readonly")
-        self.yEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.yLb = ttk.Label(self.xyzFrame, text="yの向き", font=("", 14))
+            self.yLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_y = tkinter.DoubleVar()
+            self.yEt = ttk.Entry(self.xyzFrame, textvariable=self.v_y, font=("", 14), width=7, justify="center", state="readonly")
+            self.yEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.zLb = ttk.Label(self.xyzFrame, text="zの向き", font=("", 14))
-        self.zLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_z = tkinter.DoubleVar()
-        self.zEt = ttk.Entry(self.xyzFrame, textvariable=self.v_z, font=("", 14), width=7, justify="center", state="readonly")
-        self.zEt.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.zLb = ttk.Label(self.xyzFrame, text="zの向き", font=("", 14))
+            self.zLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_z = tkinter.DoubleVar()
+            self.zEt = ttk.Entry(self.xyzFrame, textvariable=self.v_z, font=("", 14), width=7, justify="center", state="readonly")
+            self.zEt.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.kasenFrame = ttk.LabelFrame(self.sidePackFrame, text="モデル、架線情報")
-        self.kasenFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
-        self.mdlNoLb = ttk.Label(self.kasenFrame, text="モデル(smf)", font=("", 14))
-        self.mdlNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.mdlNoCb = ttk.Combobox(self.kasenFrame, width=40, values=self.smfList, state="disabled")
-        self.mdlNoCb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.kasenFrame = ttk.LabelFrame(self.sidePackFrame, text="モデル、架線情報")
+            self.kasenFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.mdlNoLb = ttk.Label(self.kasenFrame, text="モデル(smf)", font=("", 14))
+            self.mdlNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlNoCb = ttk.Combobox(self.kasenFrame, width=40, values=self.smfList, state="disabled")
+            self.mdlNoCb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.mdlKasenLb = ttk.Label(self.kasenFrame, text="【推測】架線", font=("", 14))
-        self.mdlKasenLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_mdlKasen = tkinter.IntVar()
-        self.mdlKasenEt = ttk.Entry(self.kasenFrame, textvariable=self.v_mdlKasen, font=("", 14), width=7, justify="center", state="readonly")
-        self.mdlKasenEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            if self.decryptFile.game in ["CS", "RS"]:
+                self.mdlKasenLb = ttk.Label(self.kasenFrame, text="架線", font=("", 14))
+                self.mdlKasenLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+                self.v_mdlKasen = tkinter.IntVar()
+                self.mdlKasenEt = ttk.Entry(self.kasenFrame, textvariable=self.v_mdlKasen, font=("", 14), width=7, justify="center", state="readonly")
+                self.mdlKasenEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            elif self.decryptFile.game == "BS":
+                self.mdlKasenLb = ttk.Label(self.kasenFrame, text="架線(smf)", font=("", 14))
+                self.mdlKasenLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+                self.mdlKasenCb = ttk.Combobox(self.kasenFrame, width=30, values=self.smfList, state="disabled")
+                self.mdlKasenCb.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.mdlKasenchuLb = ttk.Label(self.kasenFrame, text="架線柱(smf)", font=("", 14))
-        self.mdlKasenchuLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.mdlKasenchuCb = ttk.Combobox(self.kasenFrame, width=40, values=self.smfList, state="disabled")
-        self.mdlKasenchuCb.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlKasenchuLb = ttk.Label(self.kasenFrame, text="架線柱(smf)", font=("", 14))
+            self.mdlKasenchuLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlKasenchuCb = ttk.Combobox(self.kasenFrame, width=40, values=self.smfList, state="disabled")
+            self.mdlKasenchuCb.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        self.perLb = ttk.Label(self.kasenFrame, text="per", font=("", 14))
-        self.perLb.grid(row=3, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        self.v_per = tkinter.DoubleVar()
-        self.perEt = ttk.Entry(self.kasenFrame, textvariable=self.v_per, font=("", 14), width=7, justify="center", state="readonly")
-        self.perEt.grid(row=3, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.perLb = ttk.Label(self.kasenFrame, text="per", font=("", 14))
+            self.perLb.grid(row=3, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_per = tkinter.DoubleVar()
+            self.perEt = ttk.Entry(self.kasenFrame, textvariable=self.v_per, font=("", 14), width=7, justify="center", state="readonly")
+            self.perEt.grid(row=3, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+        elif self.decryptFile.game == "LS":
+            if self.decryptFile.ver == "DEND_MAP_VER0101":
+                self.verLf = ttk.LabelFrame(self.sidePackFrame, text="VER0101情報")
+                self.verLf.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+                self.prevRailLb = ttk.Label(self.verLf, text="繋げる\nレールNo(2)", font=("", 14))
+                self.prevRailLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+                self.v_prevRail2 = tkinter.IntVar()
+                self.prevRailEt = ttk.Entry(self.verLf, textvariable=self.v_prevRail2, font=("", 14), width=7, justify="center", state="readonly")
+                self.prevRailEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            #
+            self.xyzFrame = ttk.LabelFrame(self.sidePackFrame, text="XYZ情報")
+            self.xyzFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.xLb = ttk.Label(self.xyzFrame, text="xのpos", font=("", 14))
+            self.xLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_x_pos = tkinter.DoubleVar()
+            self.x_posEt = ttk.Entry(self.xyzFrame, textvariable=self.v_x_pos, font=("", 14), width=7, justify="center", state="readonly")
+            self.x_posEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.yLb = ttk.Label(self.xyzFrame, text="yのpos", font=("", 14))
+            self.yLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_y_pos = tkinter.DoubleVar()
+            self.y_posEt = ttk.Entry(self.xyzFrame, textvariable=self.v_y_pos, font=("", 14), width=7, justify="center", state="readonly")
+            self.y_posEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.zLb = ttk.Label(self.xyzFrame, text="zのpos", font=("", 14))
+            self.zLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_z_pos = tkinter.DoubleVar()
+            self.z_posEt = ttk.Entry(self.xyzFrame, textvariable=self.v_z_pos, font=("", 14), width=7, justify="center", state="readonly")
+            self.z_posEt.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            #
+            self.xLb = ttk.Label(self.xyzFrame, text="xのdir", font=("", 14))
+            self.xLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_x_dir = tkinter.DoubleVar()
+            self.x_dirEt = ttk.Entry(self.xyzFrame, textvariable=self.v_x_dir, font=("", 14), width=7, justify="center", state="readonly")
+            self.x_dirEt.grid(row=0, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.yLb = ttk.Label(self.xyzFrame, text="yのdir", font=("", 14))
+            self.yLb.grid(row=1, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_y_dir = tkinter.DoubleVar()
+            self.y_dirEt = ttk.Entry(self.xyzFrame, textvariable=self.v_y_dir, font=("", 14), width=7, justify="center", state="readonly")
+            self.y_dirEt.grid(row=1, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.zLb = ttk.Label(self.xyzFrame, text="zのdir", font=("", 14))
+            self.zLb.grid(row=2, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_z_dir = tkinter.DoubleVar()
+            self.z_dirEt = ttk.Entry(self.xyzFrame, textvariable=self.v_z_dir, font=("", 14), width=7, justify="center", state="readonly")
+            self.z_dirEt.grid(row=2, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            #
+            self.xyzRotFrame = ttk.LabelFrame(self.sidePackFrame, text="XYZ_Rot情報")
+            self.xyzRotFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.xLb = ttk.Label(self.xyzRotFrame, text="xのrot", font=("", 14))
+            self.xLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_x_rot = tkinter.StringVar()
+            self.x_dirEt = ttk.Entry(self.xyzRotFrame, textvariable=self.v_x_rot, font=("", 14), width=7, justify="center", state="readonly")
+            self.x_dirEt.grid(row=0, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.yLb = ttk.Label(self.xyzRotFrame, text="yのrot", font=("", 14))
+            self.yLb.grid(row=1, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_y_rot = tkinter.StringVar()
+            self.y_dirEt = ttk.Entry(self.xyzRotFrame, textvariable=self.v_y_rot, font=("", 14), width=7, justify="center", state="readonly")
+            self.y_dirEt.grid(row=1, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.zLb = ttk.Label(self.xyzRotFrame, text="zのrot", font=("", 14))
+            self.zLb.grid(row=2, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_z_rot = tkinter.StringVar()
+            self.z_dirEt = ttk.Entry(self.xyzRotFrame, textvariable=self.v_z_rot, font=("", 14), width=7, justify="center", state="readonly")
+            self.z_dirEt.grid(row=2, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            ###
+            self.sidePackFrame2 = ttk.Frame(self.frame)
+            self.sidePackFrame2.pack(anchor=tkinter.NW, padx=20)
+
+            self.kasenFrame = ttk.LabelFrame(self.sidePackFrame2, text="モデル、架線情報")
+            self.kasenFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=5, pady=15)
+            self.mdlNoLb = ttk.Label(self.kasenFrame, text="モデル(smf)", font=("", 14))
+            self.mdlNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlNoCb = ttk.Combobox(self.kasenFrame, width=30, values=self.smfList, state="disabled")
+            self.mdlNoCb.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.prevRailLb = ttk.Label(self.kasenFrame, text="繋げるレールNo", font=("", 14))
+            self.prevRailLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_prevRail = tkinter.IntVar()
+            self.prevRailEt = ttk.Entry(self.kasenFrame, textvariable=self.v_prevRail, font=("", 14), width=7, justify="center", state="readonly")
+            self.prevRailEt.grid(row=0, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.mdlKasenchuLb = ttk.Label(self.kasenFrame, text="架線柱(smf)", font=("", 14))
+            self.mdlKasenchuLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlKasenchuCb = ttk.Combobox(self.kasenFrame, width=30, values=self.smfList, state="disabled")
+            self.mdlKasenchuCb.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.mdlKasenLb = ttk.Label(self.kasenFrame, text="架線(smf)", font=("", 14))
+            self.mdlKasenLb.grid(row=1, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlKasenCb = ttk.Combobox(self.kasenFrame, width=30, values=self.smfList, state="disabled")
+            self.mdlKasenCb.grid(row=1, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.fixAmbLb = ttk.Label(self.kasenFrame, text="固定AMB(smf)", font=("", 14))
+            self.fixAmbLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.fixAmbCb = ttk.Combobox(self.kasenFrame, width=30, values=self.smfList, state="disabled")
+            self.fixAmbCb.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.perLb = ttk.Label(self.kasenFrame, text="per", font=("", 14))
+            self.perLb.grid(row=2, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_per = tkinter.DoubleVar()
+            self.perEt = ttk.Entry(self.kasenFrame, textvariable=self.v_per, font=("", 14), width=7, justify="center", state="readonly")
+            self.perEt.grid(row=2, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
         ###
         self.flagFrameLf = ttk.LabelFrame(self.frame, text="フラグ情報")
-        self.flagFrameLf.pack(anchor=tkinter.NW, padx=30, pady=15)
+        self.flagFrameLf.pack(padx=30, pady=15, fill=tkinter.X)
 
         flagInfoList = [
             [
@@ -108,15 +225,15 @@ class RailListWidget:
                 "手前位置に\n180度回転",
                 "LAST_POS",
                 "LAST01",
-                "LAST02",
+                "LAST00",
                 "橋\n通過中の音",
                 "Noドリフト"
             ],
             [
-                "クラッシュ時\nカメラ位置を高く",
+                "クラッシュ時\nカメラ位置を\n高く",
                 "他のレールも\nドリフト対象",
-                "フラグ3",
-                "フラグ4",
+                "長い車体は\n複線ドリフト\n以外は\n壁にぶつかる",
+                "脱線しても\n速度が\n落ちにくい",
                 "CPU振り子車両\n振り子のみ",
                 "CPU\n片輪ドリフト\n戻し",
                 "CPU\n右片輪ドリフト",
@@ -144,6 +261,12 @@ class RailListWidget:
             ]
         ]
 
+        if self.decryptFile.game != "RS":
+            flagInfoList[1][4] = "踏み込めば\n即ジャンプ"
+            flagInfoList[1][5] = "ドライバー視点\nぐらぐら揺れる"
+            flagInfoList[1][6] = "トロリー線"
+            flagInfoList[1][7] = "低速軌道"
+
         self.v_flagHexList = []
         self.v_flagInfoList = []
         self.chkInfoList = []
@@ -151,20 +274,20 @@ class RailListWidget:
         for i in range(len(flagInfoList)):
             v_flagInfo = []
             chkInfo = []
-            self.flagFrame = ttk.Frame(self.flagFrameLf)
+            self.flagFrame = tkinter.Frame(self.flagFrameLf)
             self.flagFrame.pack(anchor=tkinter.NW, pady=3)
 
             self.v_flagHex = tkinter.StringVar()
             self.v_flagHex.set("0x00")
             self.v_flagHexList.append(self.v_flagHex)
             self.flagHexLb = ttk.Label(self.flagFrame, textvariable=self.v_flagHex, font=("", 14))
-            self.flagHexLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=3, pady=3)
+            self.flagHexLb.grid(row=0, column=0, columnspan=8, sticky=tkinter.W + tkinter.E, padx=3, pady=3)
             for j in range(len(flagInfoList[i])):
                 self.v_flag = tkinter.IntVar()
                 self.v_flag.set(0)
                 v_flagInfo.append(self.v_flag)
                 self.flagChk = tkinter.Checkbutton(self.flagFrame, text=flagInfoList[i][j], width=10, variable=self.v_flag, command=self.changeFlag)
-                self.flagChk.grid(row=1, column=j, sticky=tkinter.W + tkinter.E, padx=3, pady=3)
+                self.flagChk.grid(row=1, column=j, sticky=tkinter.W + tkinter.E, padx=6, ipadx=6, pady=3)
                 chkInfo.append(self.flagChk)
             self.v_flagInfoList.append(v_flagInfo)
             self.chkInfoList.append(chkInfo)
@@ -267,38 +390,119 @@ class RailListWidget:
             return
         railInfo = self.railList[railNo]
 
-        self.v_prevRail.set(railInfo[1])
-        self.v_block.set(railInfo[2])
-        self.v_x.set(round(railInfo[3], 4))
-        self.v_y.set(round(railInfo[4], 4))
-        self.v_z.set(round(railInfo[5], 4))
-        self.mdlNoCb.current(railInfo[6])
-        self.v_mdlKasen.set(railInfo[7])
-        kasenchuNo = railInfo[8]
-        if kasenchuNo == -1 or kasenchuNo == -2:
-            kasenchuNo = len(self.smfList) + kasenchuNo
-        self.mdlKasenchuCb.current(kasenchuNo)
-        self.v_per.set(round(railInfo[9], 4))
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            self.v_prevRail.set(railInfo[1])
+            self.v_block.set(railInfo[2])
+            self.v_x.set(railInfo[3])
+            self.v_y.set(railInfo[4])
+            self.v_z.set(railInfo[5])
+            self.mdlNoCb.current(railInfo[6])
+            if self.decryptFile.game in ["CS", "RS"]:
+                self.v_mdlKasen.set(railInfo[7])
+            elif self.decryptFile.game == "BS":
+                kasenNo = railInfo[7]
+                if kasenNo == -1:
+                    kasenNo = len(self.smfList) + kasenNo
+                self.mdlKasenCb.current(kasenNo)
 
-        for i in range(4):
-            strFlagHex = "0x{0:02x}".format(railInfo[10 + i])
-            self.v_flagHexList[i].set(strFlagHex)
-            for j in range(8):
-                if railInfo[10 + i] & (2**(7 - j)) == 0:
-                    self.v_flagInfoList[i][j].set(0)
-                else:
-                    self.v_flagInfoList[i][j].set(1)
+            kasenchuNo = railInfo[8]
+            if kasenchuNo == -1 or kasenchuNo == -2:
+                kasenchuNo = len(self.smfList) + kasenchuNo
+            self.mdlKasenchuCb.current(kasenchuNo)
+            self.v_per.set(railInfo[9])
 
-        self.v_railDataCnt.set(railInfo[14])
-        self.setRailInfo(railInfo[14])
-        for i in range(len(self.varRailList)):
-            self.varRailList[i].set(railInfo[15 + i])
+            for i in range(4):
+                strFlagHex = "0x{0:02x}".format(railInfo[10 + i])
+                self.v_flagHexList[i].set(strFlagHex)
+                for j in range(8):
+                    if railInfo[10 + i] & (2**(7 - j)) == 0:
+                        self.v_flagInfoList[i][j].set(0)
+                    else:
+                        self.v_flagInfoList[i][j].set(1)
 
-        if self.decryptFile.ver == "DEND_MAP_VER0400":
-            railCount = railInfo[14]
-            self.setRevRailInfo(railCount)
-            for i in range(len(self.varRevRailList)):
-                self.varRevRailList[i].set(railInfo[15 + railCount * 4 + i])
+            self.v_railDataCnt.set(railInfo[14])
+            self.setRailInfo(railInfo[14])
+            for i in range(len(self.varRailList)):
+                self.varRailList[i].set(railInfo[15 + i])
+
+            if self.decryptFile.ver == "DEND_MAP_VER0400":
+                railCount = railInfo[14]
+                self.setRevRailInfo(railCount)
+                for i in range(len(self.varRevRailList)):
+                    self.varRevRailList[i].set(railInfo[15 + railCount * 4 + i])
+        elif self.decryptFile.game == "LS":
+            railIdx = 1
+            if self.decryptFile.ver == "DEND_MAP_VER0101":
+                self.v_prevRail2.set(railInfo[railIdx])
+                railIdx += 2
+            #
+            self.v_x_pos.set(railInfo[railIdx])
+            railIdx += 1
+            self.v_y_pos.set(railInfo[railIdx])
+            railIdx += 1
+            self.v_z_pos.set(railInfo[railIdx])
+            railIdx += 1
+            self.v_x_dir.set(railInfo[railIdx])
+            railIdx += 1
+            self.v_y_dir.set(railInfo[railIdx])
+            railIdx += 1
+            self.v_z_dir.set(railInfo[railIdx])
+            railIdx += 1
+
+            self.mdlNoCb.current(railInfo[railIdx])
+            railIdx += 1
+            self.v_prevRail.set(railInfo[railIdx])
+            railIdx += 1
+
+            if railInfo[railIdx - 1] == -1:
+                self.v_x_rot.set(str(railInfo[railIdx]))
+                railIdx += 1
+                self.v_y_rot.set(str(railInfo[railIdx]))
+                railIdx += 1
+                self.v_z_rot.set(str(railInfo[railIdx]))
+                railIdx += 1
+            else:
+                self.v_x_rot.set("-")
+                self.v_y_rot.set("-")
+                self.v_z_rot.set("-")
+
+            kasenchuNo = railInfo[railIdx]
+            if kasenchuNo == -1:
+                kasenchuNo = len(self.smfList) + kasenchuNo
+            self.mdlKasenchuCb.current(kasenchuNo)
+            railIdx += 1
+
+            kasenNo = railInfo[railIdx]
+            if kasenNo == -1:
+                kasenNo = len(self.smfList) + kasenNo
+            self.mdlKasenCb.current(kasenNo)
+            railIdx += 1
+
+            fixAmbNo = railInfo[railIdx]
+            if fixAmbNo == -1:
+                fixAmbNo = len(self.smfList) + fixAmbNo
+            self.fixAmbCb.current(fixAmbNo)
+            railIdx += 1
+
+            self.v_per.set(railInfo[railIdx])
+            railIdx += 1
+
+            for i in range(4):
+                strFlagHex = "0x{0:02x}".format(railInfo[railIdx])
+                self.v_flagHexList[i].set(strFlagHex)
+                for j in range(8):
+                    if railInfo[railIdx] & (2**(7 - j)) == 0:
+                        self.v_flagInfoList[i][j].set(0)
+                    else:
+                        self.v_flagInfoList[i][j].set(1)
+                railIdx += 1
+
+            self.v_railDataCnt.set(railInfo[railIdx])
+            self.setRailInfo(railInfo[railIdx])
+            railIdx += 1
+            for i in range(len(self.varRailList)):
+                self.varRailList[i].set(railInfo[railIdx])
+                railIdx += 1
 
     def saveCsv(self):
         errorMsg = "CSVで上書きが失敗しました。\n権限問題の可能性があります。"
@@ -317,97 +521,188 @@ class RailListWidget:
         try:
             csvLines.pop(0)
             railList = []
-            count = 2
-            for csv in csvLines:
-                railInfo = []
-                csv = csv.strip()
-                arr = csv.split(",")
-                if len(arr) < 15:
-                    raise Exception
+            count = 0
+            if self.decryptFile.game in ["BS", "CS", "RS"]:
+                for csv in csvLines:
+                    railInfo = []
+                    csv = csv.strip()
+                    arr = csv.split(",")
+                    if len(arr) < 15:
+                        raise Exception
 
-                prev_rail = int(arr[1])
-                railInfo.append(prev_rail)
+                    prev_rail = int(arr[1])
+                    railInfo.append(prev_rail)
 
-                block = int(arr[2])
-                railInfo.append(block)
+                    block = int(arr[2])
+                    railInfo.append(block)
 
-                for i in range(3):
-                    dirF = float(arr[3 + i])
-                    railInfo.append(dirF)
+                    for i in range(3):
+                        dirF = float(arr[3 + i])
+                        railInfo.append(dirF)
 
-                mdl_no = int(arr[6])
-                railInfo.append(mdl_no)
+                    mdl_no = int(arr[6])
+                    railInfo.append(mdl_no)
 
-                kasen = int(arr[7])
-                railInfo.append(kasen)
+                    kasen = int(arr[7])
+                    railInfo.append(kasen)
 
-                kasenchu = int(arr[8])
-                railInfo.append(kasenchu)
+                    kasenchu = int(arr[8])
+                    railInfo.append(kasenchu)
 
-                per = float(arr[9])
-                railInfo.append(per)
+                    per = float(arr[9])
+                    railInfo.append(per)
 
-                for i in range(4):
-                    flag = int(arr[10 + i], 16)
-                    railInfo.append(flag)
+                    for i in range(4):
+                        flag = int(arr[10 + i], 16)
+                        railInfo.append(flag)
 
-                rail_data = int(arr[14])
-                railInfo.append(rail_data)
+                    rail_data = int(arr[14])
+                    railInfo.append(rail_data)
 
-                readCount = 4
-                if self.decryptFile.ver == "DEND_MAP_VER0400":
-                    readCount = 8
+                    readCount = 4
+                    if self.decryptFile.ver == "DEND_MAP_VER0400":
+                        readCount = 8
 
-                for i in range(rail_data * readCount):
-                    rail = int(arr[15 + i])
-                    railInfo.append(rail)
+                    for i in range(rail_data * readCount):
+                        rail = int(arr[15 + i])
+                        railInfo.append(rail)
 
-                if self.decryptFile.game in ["BS", "CS"]:
-                    endcnt = int(arr[15 + rail_data * readCount])
-                    copyElse3List = []
-                    if endcnt > 0:
-                        if int(arr[0]) < len(self.decryptFile.railList):
-                            originRailInfo = self.decryptFile.railList[int(arr[0])]
-                            originRailData = originRailInfo[14]
-                            originEndcntIndex = 15 + originRailData * readCount
-                            originElse3List = originRailInfo[originEndcntIndex]
-                            copyElse3List = copy.deepcopy(originElse3List)
-                            copyElse3List[0] = endcnt
+                    if self.decryptFile.game in ["BS", "CS"]:
+                        endcnt = int(arr[15 + rail_data * readCount])
+                        copyElse3List = []
+                        if endcnt > 0:
+                            if int(arr[0]) < len(self.decryptFile.railList):
+                                originRailInfo = self.decryptFile.railList[int(arr[0])]
+                                originRailData = originRailInfo[14]
+                                originEndcntIndex = 15 + originRailData * readCount
+                                originElse3List = originRailInfo[originEndcntIndex]
+                                copyElse3List = copy.deepcopy(originElse3List)
+                                copyElse3List[0] = endcnt
 
-                            for i in range(endcnt):
-                                if i >= originElse3List[0]:
+                                for i in range(endcnt):
+                                    if i >= originElse3List[0]:
+                                        for j in range(8):
+                                            copyElse3List.append(0)
+                            else:
+                                for i in range(endcnt):
                                     for j in range(8):
                                         copyElse3List.append(0)
-                        else:
-                            for i in range(endcnt):
-                                for j in range(8):
-                                    copyElse3List.append(0)
-                    railInfo.append(copyElse3List)
+                        railInfo.append(copyElse3List)
 
-                    else4Info = []
-                    if prev_rail == -1:
-                        originRailInfo = self.decryptFile.railList[int(arr[0])]
-                        originPrevRail = originRailInfo[1]
-                        if originPrevRail == -1:
+                        else4Info = []
+                        if prev_rail == -1:
+                            originRailInfo = self.decryptFile.railList[int(arr[0])]
+                            originPrevRail = originRailInfo[1]
+                            if originPrevRail == -1:
+                                originRailData = originRailInfo[14]
+                                originElse4Index = 16 + originRailData * readCount
+                                else4Info = originRailInfo[originElse4Index]
+                            else:
+                                else4Info.append(-1)
+                                for i in range(6):
+                                    else4Info.append(0)
+                        railInfo.append(else4Info)
+
+                        if self.decryptFile.game == "BS":
+                            originRailInfo = self.decryptFile.railList[int(arr[0])]
                             originRailData = originRailInfo[14]
-                            originElse4Index = 16 + originRailData * readCount
-                            else4Info = originRailInfo[originElse4Index]
+                            ambListIndex = 17 + originRailData * readCount
+                            ambList = originRailInfo[ambListIndex]
+                            railInfo.append(ambList)
+                    railList.append(railInfo)
+                    count += 1
+            elif self.decryptFile.game == "LS":
+                for csv in csvLines:
+                    railInfo = []
+                    csv = csv.strip()
+                    arr = csv.split(",")
+                    if len(arr) < 21:
+                        raise Exception
+
+                    csvIdx = 1
+                    if self.decryptFile.ver == "DEND_MAP_VER0101":
+                        prev_rail2 = int(arr[csvIdx])
+                        railInfo.append(prev_rail2)
+                        csvIdx += 1
+
+                        if prev_rail2 != -1:
+                            if int(arr[0]) < len(self.decryptFile.railList):
+                                originRailInfo = self.decryptFile.railList[int(arr[0])]
+                                originElse4Info = originRailInfo[2]
+                                if len(originElse4Info) > 0:
+                                    railInfo.append(originRailInfo[2][2:])
+                                else:
+                                    else4Info = []
+                                    for i in range(6):
+                                        else4Info.append(0.0)
+                                    railInfo.append(else4Info)
+                            else:
+                                else4Info = []
+                                for i in range(6):
+                                    else4Info.append(0.0)
+                                railInfo.append(else4Info)
                         else:
-                            else4Info.append(-1)
-                            for i in range(6):
-                                else4Info.append(0)
-                    railInfo.append(else4Info)
+                            railInfo.append([])
 
-                    if self.decryptFile.game == "BS":
+                    for i in range(6):
+                        tempF = float(arr[csvIdx])
+                        railInfo.append(tempF)
+                        csvIdx += 1
+
+                    mdl_no = int(arr[csvIdx])
+                    railInfo.append(mdl_no)
+                    csvIdx += 1
+
+                    prev_rail = int(arr[csvIdx])
+                    railInfo.append(prev_rail)
+                    csvIdx += 1
+
+                    for i in range(3):
+                        if prev_rail == -1:
+                            tempF = float(arr[csvIdx])
+                            railInfo.append(tempF)
+                        csvIdx += 1
+
+                    kasenchu = int(arr[csvIdx])
+                    railInfo.append(kasenchu)
+                    csvIdx += 1
+
+                    kasen = int(arr[csvIdx])
+                    railInfo.append(kasen)
+                    csvIdx += 1
+
+                    fixAmbNo = int(arr[csvIdx])
+                    railInfo.append(fixAmbNo)
+                    csvIdx += 1
+
+                    per = float(arr[csvIdx])
+                    railInfo.append(per)
+                    csvIdx += 1
+
+                    for i in range(4):
+                        flag = int(arr[csvIdx], 16)
+                        railInfo.append(flag)
+                        csvIdx += 1
+
+                    rail_data = int(arr[csvIdx])
+                    railInfo.append(rail_data)
+                    csvIdx += 1
+
+                    for i in range(rail_data * 4):
+                        rail = int(arr[csvIdx])
+                        railInfo.append(rail)
+                        csvIdx += 1
+
+                    if int(arr[0]) < len(self.decryptFile.railList):
                         originRailInfo = self.decryptFile.railList[int(arr[0])]
-                        originRailData = originRailInfo[14]
-                        ambListIndex = 17 + originRailData * readCount
-                        ambList = originRailInfo[ambListIndex]
-                        railInfo.append(ambList)
-                railList.append(railInfo)
-                count += 1
+                        originAmbList = originRailInfo[-1]
+                        railInfo.append(originAmbList)
+                    else:
+                        railInfo.append([])
 
-            count -= 3
+                    railList.append(railInfo)
+                    count += 1
+
             msg = "{0}行のデータを読み込みしました。\n上書きしますか？".format(count)
             result = mb.askokcancel(title="警告", message=msg, icon="warning")
 
@@ -420,7 +715,7 @@ class RailListWidget:
                 self.reloadFunc()
 
         except Exception:
-            errorMsg = "{0}行のデータを読み込み失敗しました。".format(count)
+            errorMsg = "{0}行のデータを読み込み失敗しました。".format(count + 1)
             mb.showerror(title="読み込みエラー", message=errorMsg)
             return
 
@@ -440,7 +735,7 @@ class RailListWidget:
                 w = open(path, "w")
                 w.write("index,prev_rail,block,")
                 w.write("dir_x,dir_y,dir_z,")
-                w.write("mdl_no,mdl_flg,mdl_kasenchu,per,")
+                w.write("mdl_no,mdl_kasen,mdl_kasenchu,per,")
                 w.write("flg,flg,flg,flg,")
                 w.write("rail_data,")
                 w.write("next_rail,next_no,prev_rail,prev_no,\n")

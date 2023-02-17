@@ -14,7 +14,7 @@ class StationNameWidget:
         self.reloadFunc = reloadFunc
         self.copyStationNameInfo = []
         self.stationNameLf = ttk.LabelFrame(self.frame, text="駅名位置情報")
-        self.stationNameLf.pack(anchor=tkinter.NW, padx=10, pady=5)
+        self.stationNameLf.pack(anchor=tkinter.NW, padx=10, pady=5, fill=tkinter.X)
 
         self.headerFrame = ttk.Frame(self.stationNameLf)
         self.headerFrame.pack()
@@ -120,6 +120,42 @@ class StationNameWidget:
                 data += (stNameInfo[0], stNameInfo[1], stNameInfo[2])
                 self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
                 index += 1
+        elif self.decryptFile.game == "LS":
+            col_tuple = ("番号", "駅名", "駅フラグ", "レールNo", "f1", "f2", "f3", "f4", "f5", "f6")
+
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("駅名", anchor=tkinter.CENTER, width=130)
+            self.treeviewFrame.tree.column("駅フラグ", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("レールNo", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f2", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f3", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f4", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f5", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("f6", anchor=tkinter.CENTER, width=50)
+
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅名", text="駅名", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("駅フラグ", text="駅フラグ", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("レールNo", text="レールNo", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f1", text="f1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f2", text="f2", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f3", text="f3", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f4", text="f4", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f5", text="f5", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("f6", text="f6", anchor=tkinter.CENTER)
+
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
+
+            index = 0
+            for stNameInfo in self.stationNameList:
+                data = (index,)
+                data += (stNameInfo[0], stNameInfo[1], stNameInfo[2])
+                data += (stNameInfo[3], stNameInfo[4], stNameInfo[5], stNameInfo[6], stNameInfo[7], stNameInfo[8])
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
 
     def editLine(self):
         selectId = self.treeviewFrame.tree.selection()[0]
@@ -205,28 +241,65 @@ class EditStationNameListWidget(sd.Dialog):
         for i in range(len(stationNameInfoKeyList)):
             self.stationNameInfoLb = ttk.Label(master, text=stationNameInfoKeyList[i], font=("", 14))
             self.stationNameInfoLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
-            if i == 0:
-                self.varStationNameInfo = tkinter.StringVar()
-                self.varList.append(self.varStationNameInfo)
-                self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
-                self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-
-                if self.mode == "modify":
-                    self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
-            elif i in [3, 4, 5]:
-                self.varStationNameInfo = tkinter.DoubleVar()
-                self.varList.append(self.varStationNameInfo)
-                self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
-                self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-                if self.mode == "modify":
-                    self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
-            else:
-                self.varStationNameInfo = tkinter.IntVar()
-                self.varList.append(self.varStationNameInfo)
-                self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
-                self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
-                if self.mode == "modify":
-                    self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+            if self.decryptFile.game in ["CS", "RS"]:
+                if i == 0:
+                    self.varStationNameInfo = tkinter.StringVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+                elif i in [3, 4, 5]:
+                    self.varStationNameInfo = tkinter.DoubleVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+                else:
+                    self.varStationNameInfo = tkinter.IntVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+            elif self.decryptFile.game == "BS":
+                if i == 0:
+                    self.varStationNameInfo = tkinter.StringVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+                else:
+                    self.varStationNameInfo = tkinter.IntVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+            elif self.decryptFile.game == "LS":
+                if i == 0:
+                    self.varStationNameInfo = tkinter.StringVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+                elif i in [1, 2]:
+                    self.varStationNameInfo = tkinter.IntVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
+                else:
+                    self.varStationNameInfo = tkinter.DoubleVar()
+                    self.varList.append(self.varStationNameInfo)
+                    self.stationNameInfoEt = ttk.Entry(master, textvariable=self.varStationNameInfo, font=("", 14))
+                    self.stationNameInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varStationNameInfo.set(self.stationNameInfo[stationNameInfoKeyList[i]])
 
         if self.mode == "insert":
             self.setInsertWidget(master, len(stationNameInfoKeyList))
@@ -247,22 +320,45 @@ class EditStationNameListWidget(sd.Dialog):
         result = mb.askokcancel(title="確認", message="この値で修正しますか？", parent=self)
         if result:
             try:
-                try:
-                    for i in range(len(self.varList)):
-                        if i == 0:
-                            res = self.varList[i].get()
-                        elif i in [3, 4, 5]:
-                            res = float(self.varList[i].get())
-                        else:
-                            res = int(self.varList[i].get())
-                        self.resultValueList.append(res)
-                    if self.mode == "insert":
-                        self.insert = self.insertCb.current()
+                for i in range(len(self.varList)):
+                    if self.decryptFile.game in ["CS", "RS"]:
+                        try:
+                            if i == 0:
+                                res = self.varList[i].get()
+                            elif i in [3, 4, 5]:
+                                res = float(self.varList[i].get())
+                            else:
+                                res = int(self.varList[i].get())
+                            self.resultValueList.append(res)
+                        except Exception:
+                            errorMsg = "整数で入力してください。"
+                            mb.showerror(title="数字エラー", message=errorMsg)
+                    elif self.decryptFile.game == "BS":
+                        try:
+                            if i == 0:
+                                res = self.varList[i].get()
+                            else:
+                                res = int(self.varList[i].get())
+                            self.resultValueList.append(res)
+                        except Exception:
+                            errorMsg = "整数で入力してください。"
+                            mb.showerror(title="数字エラー", message=errorMsg)
+                    elif self.decryptFile.game == "LS":
+                        try:
+                            if i == 0:
+                                res = self.varList[i].get()
+                            elif i in [1, 2]:
+                                res = int(self.varList[i].get())
+                            else:
+                                res = float(self.varList[i].get())
+                            self.resultValueList.append(res)
+                        except Exception:
+                            errorMsg = "整数で入力してください。"
+                            mb.showerror(title="数字エラー", message=errorMsg)
 
-                    return True
-                except Exception:
-                    errorMsg = "整数で入力してください。"
-                    mb.showerror(title="数字エラー", message=errorMsg)
+                if self.mode == "insert":
+                    self.insert = self.insertCb.current()
+                return True
             except Exception:
                 errorMsg = "予想外のエラーです"
                 mb.showerror(title="エラー", message=errorMsg)

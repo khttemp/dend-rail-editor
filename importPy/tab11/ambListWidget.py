@@ -63,8 +63,7 @@ class AmbListWidget:
             self.railPosEt = ttk.Entry(self.ambInfoLf, textvariable=self.v_railPos, font=("", 14), width=7, justify="center", state="readonly")
             self.railPosEt.grid(row=3, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        #
-        if self.decryptFile.game in ["CS", "RS"]:
+            #
             self.xyzFrame = ttk.LabelFrame(self.sidePackFrame, text="BASE距離、向きXYZ情報")
             self.xyzFrame.pack(anchor=tkinter.NW, side=tkinter.LEFT, pady=15)
             self.xPosLb = ttk.Label(self.xyzFrame, text="xの距離", font=("", 14))
@@ -103,8 +102,7 @@ class AmbListWidget:
             self.zRotEt = ttk.Entry(self.xyzFrame, textvariable=self.v_zRot, font=("", 14), width=7, justify="center", state="readonly")
             self.zRotEt.grid(row=2, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
-        #
-        if self.decryptFile.game in ["CS", "RS"]:
+            #
             self.ambInfo2Frame = ttk.LabelFrame(self.sidePackFrame, text="AMB情報2")
             self.ambInfo2Frame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=30, pady=15)
 
@@ -119,7 +117,7 @@ class AmbListWidget:
             self.v_fog = tkinter.IntVar()
             self.fogEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_fog, font=("", 14), width=7, justify="center", state="readonly")
             self.fogEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        else:
+        elif self.decryptFile.game == "BS":
             self.ambInfo2Frame = ttk.LabelFrame(self.sidePackFrame, text="AMB情報")
             self.ambInfo2Frame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=30, pady=15)
 
@@ -140,11 +138,44 @@ class AmbListWidget:
             self.v_fog = tkinter.IntVar()
             self.fogEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_fog, font=("", 14), width=7, justify="center", state="readonly")
             self.fogEt.grid(row=2, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+        elif self.decryptFile.game == "LS":
+            self.ambInfo2Frame = ttk.LabelFrame(self.sidePackFrame, text="AMB情報")
+            self.ambInfo2Frame.pack(anchor=tkinter.NW, side=tkinter.LEFT, padx=30, pady=15)
+
+            self.railNoLb = ttk.Label(self.ambInfo2Frame, text="配置レールNo", font=("", 14))
+            self.railNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_railNo = tkinter.IntVar()
+            self.railNoEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_railNo, font=("", 14), width=7, justify="center", state="readonly")
+            self.railNoEt.grid(row=0, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.posLb = ttk.Label(self.ambInfo2Frame, text="pos", font=("", 14))
+            self.posLb.grid(row=1, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_pos = tkinter.IntVar()
+            self.posEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_pos, font=("", 14), width=7, justify="center", state="readonly")
+            self.posEt.grid(row=1, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.railPosLb = ttk.Label(self.ambInfo2Frame, text="配置レールPos", font=("", 14))
+            self.railPosLb.grid(row=0, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_railPos = tkinter.IntVar()
+            self.railPosEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_railPos, font=("", 14), width=7, justify="center", state="readonly")
+            self.railPosEt.grid(row=0, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.mdlNoLb = ttk.Label(self.ambInfo2Frame, text="AMBモデル(smf)", font=("", 14))
+            self.mdlNoLb.grid(row=2, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.mdlNoCb = ttk.Combobox(self.ambInfo2Frame, width=40, values=self.smfList, state="disabled")
+            self.mdlNoCb.grid(row=2, column=1, columnspan=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+
+            self.animeNoLb = ttk.Label(self.ambInfo2Frame, text="ANIME番号", font=("", 14))
+            self.animeNoLb.grid(row=1, column=2, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
+            self.v_animeNo = tkinter.IntVar()
+            self.animeNoEt = ttk.Entry(self.ambInfo2Frame, textvariable=self.v_animeNo, font=("", 14), width=7, justify="center", state="readonly")
+            self.animeNoEt.grid(row=1, column=3, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
 
         #
-        self.ambModelLf = ttk.LabelFrame(self.frame, text="AMBモデル情報")
-        self.ambModelLf.pack(anchor=tkinter.NW, padx=30, pady=15)
-        self.setAmbInfo(self.ambModelLf, True)
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
+            self.ambModelLf = ttk.LabelFrame(self.frame, text="AMBモデル情報")
+            self.ambModelLf.pack(anchor=tkinter.NW, padx=30, pady=15)
+            self.setAmbInfo(self.ambModelLf, True)
 
         #
         if self.decryptFile.game in ["CS", "RS"]:
@@ -267,7 +298,7 @@ class AmbListWidget:
                 self.varChildList.append(self.v_per)
             self.perEt = ttk.Entry(self.xyzFrame, textvariable=self.v_per, font=("", 14), width=7, justify="center", state="readonly")
             self.perEt.grid(row=4, column=1, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
-        else:
+        elif self.decryptFile.game == "BS":
             self.mdlNoLb = ttk.Label(self.mdlNoFrame, text="モデル1(smf)", font=("", 14))
             self.mdlNoLb.grid(row=0, column=0, sticky=tkinter.W + tkinter.E, padx=10, pady=10)
             self.mdlNoCb = ttk.Combobox(self.mdlNoFrame, width=40, values=self.smfList, state="disabled")
@@ -355,54 +386,63 @@ class AmbListWidget:
             self.v_length.set(ambInfo[1])
             self.v_railNo.set(ambInfo[2])
             self.v_railPos.set(ambInfo[3])
-            self.v_xPos.set(round(ambInfo[4], 4))
-            self.v_yPos.set(round(ambInfo[5], 4))
-            self.v_zPos.set(round(ambInfo[6], 4))
-            self.v_xRot.set(round(ambInfo[7], 4))
-            self.v_yRot.set(round(ambInfo[8], 4))
-            self.v_zRot.set(round(ambInfo[9], 4))
+            self.v_xPos.set(ambInfo[4])
+            self.v_yPos.set(ambInfo[5])
+            self.v_zPos.set(ambInfo[6])
+            self.v_xRot.set(ambInfo[7])
+            self.v_yRot.set(ambInfo[8])
+            self.v_zRot.set(ambInfo[9])
             self.v_priority.set(ambInfo[10])
             self.v_fog.set(ambInfo[11])
 
             self.varList[0].current(ambInfo[12])
-            self.varList[1].set(round(ambInfo[13], 4))
-            self.varList[2].set(round(ambInfo[14], 4))
-            self.varList[3].set(round(ambInfo[15], 4))
-            self.varList[4].set(round(ambInfo[16], 4))
-            self.varList[5].set(round(ambInfo[17], 4))
-            self.varList[6].set(round(ambInfo[18], 4))
-            self.varList[7].set(round(ambInfo[19], 4))
-            self.varList[8].set(round(ambInfo[20], 4))
-            self.varList[9].set(round(ambInfo[21], 4))
-            self.varList[10].set(round(ambInfo[22], 4))
+            self.varList[1].set(ambInfo[13])
+            self.varList[2].set(ambInfo[14])
+            self.varList[3].set(ambInfo[15])
+            self.varList[4].set(ambInfo[16])
+            self.varList[5].set(ambInfo[17])
+            self.varList[6].set(ambInfo[18])
+            self.varList[7].set(ambInfo[19])
+            self.varList[8].set(ambInfo[20])
+            self.varList[9].set(ambInfo[21])
+            self.varList[10].set(ambInfo[22])
 
             self.setAmbChildInfo(ambInfo)
             childCount = ambInfo[23]
             for i in range(childCount):
                 self.varChildList[11 * i + 0].current(ambInfo[11 * i + 24])
-                self.varChildList[11 * i + 1].set(round(ambInfo[11 * i + 25], 4))
-                self.varChildList[11 * i + 2].set(round(ambInfo[11 * i + 26], 4))
-                self.varChildList[11 * i + 3].set(round(ambInfo[11 * i + 27], 4))
-                self.varChildList[11 * i + 4].set(round(ambInfo[11 * i + 28], 4))
-                self.varChildList[11 * i + 5].set(round(ambInfo[11 * i + 29], 4))
-                self.varChildList[11 * i + 6].set(round(ambInfo[11 * i + 30], 4))
-                self.varChildList[11 * i + 7].set(round(ambInfo[11 * i + 31], 4))
-                self.varChildList[11 * i + 8].set(round(ambInfo[11 * i + 32], 4))
-                self.varChildList[11 * i + 9].set(round(ambInfo[11 * i + 33], 4))
-                self.varChildList[11 * i + 10].set(round(ambInfo[11 * i + 34], 4))
-        else:
+                self.varChildList[11 * i + 1].set(ambInfo[11 * i + 25])
+                self.varChildList[11 * i + 2].set(ambInfo[11 * i + 26])
+                self.varChildList[11 * i + 3].set(ambInfo[11 * i + 27])
+                self.varChildList[11 * i + 4].set(ambInfo[11 * i + 28])
+                self.varChildList[11 * i + 5].set(ambInfo[11 * i + 29])
+                self.varChildList[11 * i + 6].set(ambInfo[11 * i + 30])
+                self.varChildList[11 * i + 7].set(ambInfo[11 * i + 31])
+                self.varChildList[11 * i + 8].set(ambInfo[11 * i + 32])
+                self.varChildList[11 * i + 9].set(ambInfo[11 * i + 33])
+                self.varChildList[11 * i + 10].set(ambInfo[11 * i + 34])
+        elif self.decryptFile.game == "BS":
             self.v_railNo.set(ambInfo[0])
             self.v_priority.set(ambInfo[1])
             self.v_fog.set(ambInfo[2])
             self.varList[0].current(ambInfo[3])
             self.varList[1].set(ambInfo[4])
-            self.varList[2].set(round(ambInfo[5], 4))
-            self.varList[3].set(round(ambInfo[6], 4))
-            self.varList[4].set(round(ambInfo[7], 4))
-            self.varList[5].set(round(ambInfo[8], 4))
-            self.varList[6].set(round(ambInfo[9], 4))
-            self.varList[7].set(round(ambInfo[10], 4))
-            self.varList[8].set(round(ambInfo[11], 4))
+            self.varList[2].set(ambInfo[5])
+            self.varList[3].set(ambInfo[6])
+            self.varList[4].set(ambInfo[7])
+            self.varList[5].set(ambInfo[8])
+            self.varList[6].set(ambInfo[9])
+            self.varList[7].set(ambInfo[10])
+            self.varList[8].set(ambInfo[11])
+        elif self.decryptFile.game == "LS":
+            self.v_railNo.set(ambInfo[0])
+            self.v_pos.set(ambInfo[1])
+            self.v_railPos.set(ambInfo[2])
+            if ambInfo[3] == 0:
+                self.mdlNoCb.set("なし")
+            else:
+                self.mdlNoCb.current(ambInfo[3])
+            self.v_animeNo.set(ambInfo[4])
 
     def saveCsv(self):
         errorMsg = "CSVで上書きが失敗しました。\n権限問題の可能性があります。"
@@ -422,7 +462,7 @@ class AmbListWidget:
             csvLines.pop(0)
             ambList = []
             ambInfo = []
-            count = 2
+            count = 0
             childCount = 0
             childAllCount = 0
             childFlag = False
@@ -490,7 +530,7 @@ class AmbListWidget:
                         childCount = 0
                         ambList.append(ambInfo)
                     count += 1
-                else:
+                elif self.decryptFile.game == "BS":
                     ambInfo = []
                     if len(arr) < 12:
                         raise Exception
@@ -504,8 +544,17 @@ class AmbListWidget:
                         ambInfo.append(tempF)
                     ambList.append(ambInfo)
                     count += 1
+                elif self.decryptFile.game == "LS":
+                    ambInfo = []
+                    if len(arr) < 5:
+                        raise Exception
 
-            count -= 1
+                    for i in range(5):
+                        temp = int(arr[i])
+                        ambInfo.append(temp)
+                    ambList.append(ambInfo)
+                    count += 1
+
             msg = "{0}行のデータを読み込みしました。\n上書きしますか？".format(count)
             result = mb.askokcancel(title="警告", message=msg, icon="warning")
 
@@ -518,6 +567,6 @@ class AmbListWidget:
                 self.reloadFunc()
 
         except Exception:
-            errorMsg = "{0}行のデータを読み込み失敗しました。".format(count)
+            errorMsg = "{0}行のデータを読み込み失敗しました。".format(count + 1)
             mb.showerror(title="読み込みエラー", message=errorMsg)
             return

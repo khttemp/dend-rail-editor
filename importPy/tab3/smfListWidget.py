@@ -16,7 +16,7 @@ class SmfListWidget:
         self.copySmfInfo = []
 
         self.swfListLf = ttk.LabelFrame(self.frame, text="smf情報")
-        self.swfListLf.pack(anchor=tkinter.NW, padx=10, pady=5)
+        self.swfListLf.pack(anchor=tkinter.NW, padx=10, pady=5, fill=tkinter.X)
 
         self.headerFrame = ttk.Frame(self.swfListLf)
         self.headerFrame.pack()
@@ -49,7 +49,7 @@ class SmfListWidget:
         self.pasteLineBtn = ttk.Button(self.btnFrame, text="選択した行に貼り付けする", width=25, state="disabled", command=self.pasteLine)
         self.pasteLineBtn.grid(row=1, column=1, padx=10, pady=15)
 
-        if self.decryptFile.game == "BS":
+        if self.decryptFile.game in ["LS", "BS"]:
             self.listModifyBtn = ttk.Button(self.btnFrame, text="選択した行のリストを修正する", width=25, state="disabled", command=self.listModify)
             self.listModifyBtn.grid(row=1, column=2, padx=10, pady=15)
 
@@ -59,7 +59,7 @@ class SmfListWidget:
             deleteLineBtn,
             copyLineBtn
         ]
-        if self.decryptFile.game == "BS":
+        if self.decryptFile.game in ["LS", "BS"]:
             btnList.append(self.listModifyBtn)
 
         self.treeFrame = ttk.Frame(self.swfListLf)
@@ -101,7 +101,7 @@ class SmfListWidget:
                 data += (smfInfo[6], smfInfo[7])
                 self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
                 index += 1
-        else:
+        elif self.decryptFile.game == "BS":
             col_tuple = ("番号", "smf名", "長さ", "e1", "e2", "リスト数")
 
             self.treeviewFrame.tree['columns'] = col_tuple
@@ -126,6 +126,34 @@ class SmfListWidget:
             for smfInfo in self.smfList:
                 data = (index,)
                 data += (smfInfo[0], smfInfo[1], smfInfo[2], smfInfo[3], len(smfInfo[4]))
+                self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
+                index += 1
+        else:
+            col_tuple = ("番号", "smf名", "長さ", "e1", "リスト数")
+
+            self.treeviewFrame.tree['columns'] = col_tuple
+            self.treeviewFrame.tree.column("#0", width=0, stretch=False)
+            self.treeviewFrame.tree.column("番号", anchor=tkinter.CENTER, width=50, stretch=False)
+            self.treeviewFrame.tree.column("smf名", anchor=tkinter.CENTER, width=130)
+            self.treeviewFrame.tree.column("長さ", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("e1", anchor=tkinter.CENTER, width=50)
+            self.treeviewFrame.tree.column("リスト数", anchor=tkinter.CENTER, width=50)
+
+            self.treeviewFrame.tree.heading("番号", text="番号", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("smf名", text="smf名", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("長さ", text="長さ", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("e1", text="e1", anchor=tkinter.CENTER)
+            self.treeviewFrame.tree.heading("リスト数", text="リスト数", anchor=tkinter.CENTER)
+
+            self.treeviewFrame.tree["displaycolumns"] = col_tuple
+
+            index = 0
+            for smfInfo in self.smfList:
+                data = (index,)
+                if len(smfInfo[3]) == 0:
+                    data += (smfInfo[0], smfInfo[1], smfInfo[2], -1)
+                else:
+                    data += (smfInfo[0], smfInfo[1], smfInfo[2], len(smfInfo[3]))
                 self.treeviewFrame.tree.insert(parent='', index='end', iid=index, values=data)
                 index += 1
 
@@ -188,7 +216,7 @@ class SmfListWidget:
                     copyList.append(int(selectItem[key], 16))
                 else:
                     copyList.append(int(selectItem[key]))
-        else:
+        elif self.decryptFile.game == "BS":
             for i in range(len(smfInfoKeyList)):
                 key = smfInfoKeyList[i]
                 if i == 0:
@@ -199,6 +227,18 @@ class SmfListWidget:
                     copyList.append(int(selectItem[key], 16))
                 else:
                     tempInfo = self.smfList[int(selectId)][4]
+                    copyList.append(tempInfo)
+        else:
+            for i in range(len(smfInfoKeyList)):
+                key = smfInfoKeyList[i]
+                if i == 0:
+                    copyList.append(selectItem[key])
+                elif i == 1:
+                    copyList.append(int(selectItem[key]))
+                elif i == 2:
+                    copyList.append(int(selectItem[key], 16))
+                else:
+                    tempInfo = self.smfList[int(selectId)][3]
                     copyList.append(tempInfo)
         self.copySmfInfo = copyList
         mb.showinfo(title="成功", message="コピーしました")
@@ -213,7 +253,7 @@ class SmfListWidget:
 
     def listModify(self):
         selectId = self.treeviewFrame.tree.selection()[0]
-        originTempList = self.decryptFile.smfList[int(selectId)][4]
+        originTempList = self.decryptFile.smfList[int(selectId)][-1]
         result = EditListElement(self.frame, "リストの変更", self.decryptFile, originTempList)
         if result.reloadFlag:
             if not self.decryptFile.saveSmfListElement(int(selectId), result.tempList):
@@ -298,7 +338,7 @@ class EditSmfListWidget(sd.Dialog):
                         else:
                             default = 255
                         self.varSmfInfo.set(default)
-        else:
+        elif self.decryptFile.game == "BS":
             smfInfoKeyList.pop()
             for i in range(len(smfInfoKeyList)):
                 self.smfInfoLb = ttk.Label(master, text=smfInfoKeyList[i], font=("", 14))
@@ -322,6 +362,61 @@ class EditSmfListWidget(sd.Dialog):
                         default = 8
                         self.varSmfInfo.set(default)
                 elif i in [2, 3]:
+                    mb = ttk.Menubutton(master, text="switch設定")
+                    menu = tkinter.Menu(mb)
+                    mb["menu"] = menu
+
+                    Flg0 = tkinter.BooleanVar()
+                    Flg1 = tkinter.BooleanVar()
+                    Flg2 = tkinter.BooleanVar()
+                    Flg3 = tkinter.BooleanVar()
+                    Flg4 = tkinter.BooleanVar()
+                    Flg5 = tkinter.BooleanVar()
+                    Flg6 = tkinter.BooleanVar()
+                    Flg7 = tkinter.BooleanVar()
+                    flagList = [Flg0, Flg1, Flg2, Flg3, Flg4, Flg5, Flg6, Flg7]
+                    self.varList.append(flagList)
+                    menu.add_checkbutton(label="フラグ0", variable=Flg7)
+                    menu.add_checkbutton(label="フラグ1", variable=Flg6)
+                    menu.add_checkbutton(label="フラグ2", variable=Flg5)
+                    menu.add_checkbutton(label="フラグ3", variable=Flg4)
+                    menu.add_checkbutton(label="フラグ4", variable=Flg3)
+                    menu.add_checkbutton(label="フラグ5", variable=Flg2)
+                    menu.add_checkbutton(label="フラグ6", variable=Flg1)
+                    menu.add_checkbutton(label="フラグ7", variable=Flg0)
+                    if self.mode == "modify":
+                        val = int(self.smfInfo[smfInfoKeyList[i]], 16)
+                        for j in range(8):
+                            if val & (2**j) == 0:
+                                flagList[j].set(False)
+                            else:
+                                flagList[j].set(True)
+
+                    mb.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+        else:
+            smfInfoKeyList.pop()
+            for i in range(len(smfInfoKeyList)):
+                self.smfInfoLb = ttk.Label(master, text=smfInfoKeyList[i], font=("", 14))
+                self.smfInfoLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)
+                if i == 0:
+                    self.varSmfInfo = tkinter.StringVar()
+                    self.varList.append(self.varSmfInfo)
+                    self.smfInfoEt = ttk.Entry(master, textvariable=self.varSmfInfo, font=("", 14))
+                    self.smfInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+
+                    if self.mode == "modify":
+                        self.varSmfInfo.set(self.smfInfo[smfInfoKeyList[i]])
+                elif i == 1:
+                    self.varSmfInfo = tkinter.IntVar()
+                    self.varList.append(self.varSmfInfo)
+                    self.smfInfoEt = ttk.Entry(master, textvariable=self.varSmfInfo, font=("", 14))
+                    self.smfInfoEt.grid(row=i, column=1, sticky=tkinter.W + tkinter.E)
+                    if self.mode == "modify":
+                        self.varSmfInfo.set(self.smfInfo[smfInfoKeyList[i]])
+                    elif self.mode == "insert":
+                        default = 8
+                        self.varSmfInfo.set(default)
+                elif i == 2:
                     mb = ttk.Menubutton(master, text="switch設定")
                     menu = tkinter.Menu(mb)
                     mb["menu"] = menu
@@ -393,7 +488,7 @@ class EditSmfListWidget(sd.Dialog):
                     except Exception:
                         errorMsg = "整数で入力してください。"
                         mb.showerror(title="数字エラー", message=errorMsg)
-                else:
+                elif self.decryptFile.game == "BS":
                     try:
                         for i in range(len(self.varList)):
                             if i == 0:
@@ -410,6 +505,33 @@ class EditSmfListWidget(sd.Dialog):
 
                         if self.mode == "modify":
                             originTempList = self.decryptFile.smfList[self.num][4]
+                            self.resultValueList.append(originTempList)
+                        else:
+                            self.resultValueList.append([])
+
+                        if self.mode == "insert":
+                            self.insert = self.insertCb.current()
+                        return True
+                    except Exception:
+                        errorMsg = "整数で入力してください。"
+                        mb.showerror(title="数字エラー", message=errorMsg)
+                else:
+                    try:
+                        for i in range(len(self.varList)):
+                            if i == 0:
+                                res = self.varList[i].get()
+                            elif i == 2:
+                                bitList = self.varList[i]
+                                res = 0
+                                for j in range(len(bitList)):
+                                    if bitList[j].get():
+                                        res |= (2**j)
+                            else:
+                                res = int(self.varList[i].get())
+                            self.resultValueList.append(res)
+
+                        if self.mode == "modify":
+                            originTempList = self.decryptFile.smfList[self.num][3]
                             self.resultValueList.append(originTempList)
                         else:
                             self.resultValueList.append([])
@@ -582,7 +704,10 @@ class EditListElementWidget(sd.Dialog):
     def body(self, master):
         self.resizable(False, False)
 
-        tempInfoLb = ["e1", "e2", "e3"]
+        if self.decryptFile.game == "BS":
+            tempInfoLb = ["e1", "e2", "e3"]
+        else:
+            tempInfoLb = ["e1", "e2"]
         for i in range(len(tempInfoLb)):
             self.tempLb = ttk.Label(master, text=tempInfoLb[i], font=("", 14))
             self.tempLb.grid(row=i, column=0, sticky=tkinter.W + tkinter.E)

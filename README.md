@@ -142,7 +142,7 @@ ddsや駅名標の定義、binファイルのアニメを調整できる
 * OS: Windows 10 64bit
 * Python 3.10.9 64bit
 * pip 22.3.1 64bit
-* Nuitka 1.3.7 64bit
+* PyInstaller 5.8.0 64bit
 * 横1024×縦768ピクセル以上の画面解像度があるコンピュータ
 
 
@@ -200,13 +200,13 @@ Windows であれば以下のコマンドを入力する。
 
 pyinstaller か Nuitka ライブラリをインストールする。 pip でも  easy_install  でも構わない。
 
-下は、 Nuitka を使用して、Windows 版実行バイナリ（ .exeファイル ）を作る例である。
+下は、 pyinstaller を使用して、Windows 版実行バイナリ（ .exeファイル ）を作る例である。
 
 ````
-> nuitka --mingw64 --onefile --enable-plugin=tk-inter --follow-imports --remove-output --disable-console railEditor.py
+> pyinstaller railEditor.py --onefile --noconsole
 ````
 
-railEditor.exe が出力される。
+dist フォルダーが作られて、 railEditor.exe が出力される。
 
 ### Virustotal
 
