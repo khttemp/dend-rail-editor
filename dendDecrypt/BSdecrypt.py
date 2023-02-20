@@ -556,15 +556,19 @@ class RailDecrypt:
             else3Info = []
             if endcnt > 0:
                 else3Info.append(i)
-                else3Info.append(endcnt)
+                tempList = []
 
                 for endc in range(endcnt):
+                    tempInfo = []
                     for k in range(8):
                         temp = self.byteArr[index]
-                        else3Info.append(temp)
+                        tempInfo.append(temp)
                         index += 1
+                    tempList.append(tempInfo)
+                else3Info.append(tempList)
                 self.else3List.append(else3Info)
-            railInfo.append(else3Info[1:])
+                else3Info = else3Info[1]
+            railInfo.append(else3Info)
             railInfo.append(else4Info[1:])
             railInfo.append(ambList)
             self.railList.append(railInfo)
@@ -1177,27 +1181,11 @@ class RailDecrypt:
                 else3ListIndex = 14 + rail_data * 4
                 else3List = railInfo[else3ListIndex]
 
-                if len(else3List) > 0:
-                    newByteArr.append(else3List[0])
-                    if i < len(self.railList):
-                        originRailInfo = self.railList[i]
-                        originRailData = originRailInfo[14]
-                        originEndcntIndex = 15 + originRailData * 4
-                        originElse3List = originRailInfo[originEndcntIndex]
-
-                        for j in range(else3List[0]):
-                            if j >= originElse3List[0]:
-                                for k in range(8):
-                                    newByteArr.append(0)
-                            else:
-                                startIdx = 1 + j * 8
-                                newByteArr.extend(else3List[startIdx:startIdx + 8])
-                    else:
-                        for j in range(else3List[0]):
-                            for k in range(8):
-                                newByteArr.append(0)
-                else:
-                    newByteArr.append(0)
+                newByteArr.append(len(else3List))
+                for j in range(len(else3List)):
+                    tempInfo = else3List[j]
+                    for k in range(8):
+                        newByteArr.append(tempInfo[k])
 
             self.save(newByteArr)
             return True
@@ -1227,7 +1215,7 @@ class RailDecrypt:
                     railListIndex = [index for (index, item) in enumerate(else3RailList) if item == copyRailInfo[0]][0]
                     copyRailData = copyRailInfo[14]
                     copyElse3ListIndex = 15 + copyRailData * 4
-                    copyRailInfo[copyElse3ListIndex] = valList[railListIndex][1:]
+                    copyRailInfo[copyElse3ListIndex] = valList[railListIndex][1]
 
                 copyRailInfo.pop(0)
                 railList.append(copyRailInfo)

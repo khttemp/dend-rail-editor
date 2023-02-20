@@ -106,7 +106,7 @@ def selectGame():
 
 
 root = tkinter.Tk()
-root.title("電車でD レール改造 1.3.0")
+root.title("電車でD レール改造 1.3.1")
 root.geometry("1024x768")
 
 menubar = tkinter.Menu(root)

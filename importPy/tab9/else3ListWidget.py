@@ -42,9 +42,10 @@ class Else3ListWidget:
 
         for i in range(len(self.else3List)):
             else3Info = self.else3List[i]
-            if self.decryptFile.game == "RS":
-                self.tempBtn = tkinter.Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3ListCnt, i, else3Info[0:2]))
-                self.tempBtn.grid(row=rowNum, column=0, sticky=tkinter.W + tkinter.E)
+            if self.decryptFile.game in ["BS", "CS", "RS"]:
+                if self.decryptFile.game == "RS":
+                    self.tempBtn = tkinter.Button(self.txtFrame2, text="修正", font=("", 14), command=partial(self.editElse3ListCnt, i, else3Info[0:2]))
+                    self.tempBtn.grid(row=rowNum, column=0, sticky=tkinter.W + tkinter.E)
 
                 self.varRailNo = tkinter.IntVar()
                 self.varRailNo.set(int(else3Info[0]))
@@ -150,7 +151,7 @@ class Else3ListWidget:
     def editElse3List(self, i, j, valList):
         result = EditElse3ListWidget(self.frame, "{0}の変更".format(self.text), self.decryptFile, valList)
         if result.reloadFlag:
-            if self.decryptFile.game == "RS":
+            if self.decryptFile.game in ["BS", "CS", "RS"]:
                 self.else3List[i][1][j] = result.resultValueList
             elif self.decryptFile.game == "LS":
                 self.else3List[i][3][j] = result.resultValueList
@@ -225,7 +226,7 @@ class EditElse3ListCntWidget(sd.Dialog):
     def body(self, master):
         self.resizable(False, False)
 
-        if self.decryptFile.game == "RS":
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
             else3InfoLbList = ["レールNo", "数"]
             for i in range(len(self.else3Info)):
                 self.else3Lb = ttk.Label(master, text=else3InfoLbList[i], font=("", 14))
@@ -258,7 +259,7 @@ class EditElse3ListCntWidget(sd.Dialog):
         result = mb.askokcancel(title="確認", message="この値で修正しますか？", parent=self)
         if result:
             try:
-                if self.decryptFile.game == "RS":
+                if self.decryptFile.game in ["BS", "CS", "RS"]:
                     for i in range(len(self.varList)):
                         try:
                             res = int(self.varList[i].get())
@@ -322,7 +323,7 @@ class EditElse3ListWidget(sd.Dialog):
     def body(self, master):
         self.resizable(False, False)
 
-        if self.decryptFile.game == "RS":
+        if self.decryptFile.game in ["BS", "CS", "RS"]:
             else3InfoLbList = ["b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8"]
             for i in range(len(self.else3Info)):
                 self.else3Lb = ttk.Label(master, text=else3InfoLbList[i], font=("", 14))
@@ -351,7 +352,7 @@ class EditElse3ListWidget(sd.Dialog):
         result = mb.askokcancel(title="確認", message="この値で修正しますか？", parent=self)
         if result:
             try:
-                if self.decryptFile.game == "RS":
+                if self.decryptFile.game in ["BS", "CS", "RS"]:
                     for i in range(len(self.varList)):
                         try:
                             res = int(self.varList[i].get())

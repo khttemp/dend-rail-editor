@@ -533,15 +533,19 @@ class RailDecrypt:
             else3Info = []
             if endcnt > 0:
                 else3Info.append(i)
-                else3Info.append(endcnt)
+                tempList = []
 
                 for endc in range(endcnt):
+                    tempInfo = []
                     for k in range(8):
                         temp = self.byteArr[index]
-                        else3Info.append(temp)
+                        tempInfo.append(temp)
                         index += 1
+                    tempList.append(tempInfo)
+                else3Info.append(tempList)
                 self.else3List.append(else3Info)
-            railInfo.append(else3Info[1:])
+                else3Info = else3Info[1]
+            railInfo.append(else3Info)
 
             else4Info = []
             if readFlag:
@@ -1343,27 +1347,11 @@ class RailDecrypt:
                 endcntIndex = 14 + rail_data * 4
                 else3List = railInfo[endcntIndex]
 
-                if len(else3List) > 0:
-                    newByteArr.append(else3List[0])
-                    if i < len(self.railList):
-                        originRailInfo = self.railList[i]
-                        originRailData = originRailInfo[14]
-                        originEndcntIndex = 15 + originRailData * 4
-                        originElse3List = originRailInfo[originEndcntIndex]
-
-                        for j in range(else3List[0]):
-                            if j >= originElse3List[0]:
-                                for k in range(8):
-                                    newByteArr.append(0)
-                            else:
-                                startIdx = 1 + j * 8
-                                newByteArr.extend(else3List[startIdx:startIdx + 8])
-                    else:
-                        for j in range(else3List[0]):
-                            for k in range(8):
-                                newByteArr.append(0)
-                else:
-                    newByteArr.append(0)
+                newByteArr.append(len(else3List))
+                for j in range(len(else3List)):
+                    tempInfo = else3List[j]
+                    for k in range(8):
+                        newByteArr.append(tempInfo[k])
 
                 if prev_rail == -1:
                     if i < len(self.railList):
@@ -1421,7 +1409,7 @@ class RailDecrypt:
                     railListIndex = [index for (index, item) in enumerate(else3RailList) if item == copyRailInfo[0]][0]
                     copyRailData = copyRailInfo[14]
                     copyElse3ListIndex = 15 + copyRailData * 4
-                    copyRailInfo[copyElse3ListIndex] = valList[railListIndex][1:]
+                    copyRailInfo[copyElse3ListIndex] = valList[railListIndex][1]
 
                 copyRailInfo.pop(0)
                 railList.append(copyRailInfo)
@@ -1517,6 +1505,114 @@ class RailDecrypt:
         except Exception:
             self.error = traceback.format_exc()
             return False
+
+    def csToRs(self):
+        try:
+            index = self.railIdx
+            newByteArr = self.byteArr[0:index]
+
+            header = "DEND_MAP_VER0300"
+            headerH = header.encode("shift-jis")
+
+            for i in range(len(headerH)):
+                newByteArr[i] = headerH[i]
+
+            railCnt = len(self.railList)
+            railCntH = struct.pack("<h", railCnt)
+            newByteArr.extend(railCntH)
+
+            for i in range(railCnt):
+                railInfo = self.railList[i][1:]
+
+                prev_rail = railInfo[0]
+                prev_railH = struct.pack("<h", prev_rail)
+                newByteArr.extend(prev_railH)
+
+                block = struct.pack("<b", railInfo[1])
+                newByteArr.extend(block)
+
+                for j in range(3):
+                    dirF = struct.pack("<f", railInfo[2 + j])
+                    newByteArr.extend(dirF)
+
+                mdl_no = railInfo[5]
+                newByteArr.append(mdl_no)
+
+                kasen = struct.pack("<b", railInfo[6])
+                newByteArr.extend(kasen)
+
+                kasenchu = struct.pack("<b", railInfo[7])
+                newByteArr.extend(kasenchu)
+
+                perF = struct.pack("<f", railInfo[8])
+                newByteArr.extend(perF)
+
+                for j in range(4):
+                    flag = railInfo[9 + j]
+                    newByteArr.append(flag)
+
+                rail_data = railInfo[13]
+                newByteArr.append(rail_data)
+
+                for j in range(rail_data * 4):
+                    railH = struct.pack("<h", railInfo[14 + j])
+                    newByteArr.extend(railH)
+
+            else3Cnt = len(self.else3List)
+            else3CntH = struct.pack("<h", else3Cnt)
+            newByteArr.extend(else3CntH)
+
+            for i in range(else3Cnt):
+                else3List = self.else3List[i]
+
+                railNo = else3List[0]
+                railNoH = struct.pack("<h", railNo)
+                newByteArr.extend(railNoH)
+
+                newByteArr.append(len(else3List[1]))
+                for j in range(len(else3List[1])):
+                    tempInfo = else3List[1][j]
+                    for k in range(8):
+                        newByteArr.append(tempInfo[k])
+
+            copyElse4List = copy.deepcopy(self.else4List)
+            else4List = []
+            for i in range(len(copyElse4List)):
+                else4Info = copyElse4List[i]
+
+                railNo = else4Info[0]
+                prevRail = else4Info[1]
+
+                if railNo == 0 and prevRail == -1:
+                    continue
+                else4List.append(else4Info)
+
+            else4Cnt = len(else4List)
+            else4CntH = struct.pack("<h", else4Cnt)
+            newByteArr.extend(else4CntH)
+
+            for i in range(else4Cnt):
+                else4Info = else4List[i]
+
+                railNo = else4Info[0]
+                railNoH = struct.pack("<h", railNo)
+                newByteArr.extend(railNoH)
+
+                prevRail = else4Info[1]
+                prevRailH = struct.pack("<h", prevRail)
+                newByteArr.extend(prevRailH)
+
+                for j in range(6):
+                    tempF = struct.pack("<f", else4Info[2 + j])
+                    newByteArr.extend(tempF)
+
+            index = self.ambIdx
+            newByteArr.extend(self.byteArr[index:])
+
+            return newByteArr
+        except Exception:
+            self.error = traceback.format_exc()
+            return None
 
     def reload(self):
         self.open()

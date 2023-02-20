@@ -35,6 +35,10 @@ class RailListWidget:
         self.csvSaveBtn = ttk.Button(self.railNoFrame, text="CSVで上書きする", command=self.saveCsv)
         self.csvSaveBtn.grid(row=0, column=3, sticky=tkinter.W + tkinter.E, padx=30)
 
+        if self.decryptFile.game == "CS":
+            self.csToRsBtn = ttk.Button(self.railNoFrame, text="RS移植ファイル作成", command=self.csToRs)
+            self.csToRsBtn.grid(row=0, column=4, sticky=tkinter.W + tkinter.E, padx=30)
+
         ###
         self.sidePackFrame = ttk.Frame(self.frame)
         self.sidePackFrame.pack(anchor=tkinter.NW, padx=20)
@@ -577,16 +581,19 @@ class RailListWidget:
                                 originEndcntIndex = 15 + originRailData * readCount
                                 originElse3List = originRailInfo[originEndcntIndex]
                                 copyElse3List = copy.deepcopy(originElse3List)
-                                copyElse3List[0] = endcnt
 
                                 for i in range(endcnt):
-                                    if i >= originElse3List[0]:
+                                    if i >= len(originElse3List):
+                                        tempInfo = []
                                         for j in range(8):
-                                            copyElse3List.append(0)
+                                            tempInfo.append(0)
+                                        copyElse3List.append(tempInfo)
                             else:
                                 for i in range(endcnt):
+                                    tempInfo = []
                                     for j in range(8):
-                                        copyElse3List.append(0)
+                                        tempInfo.append(0)
+                                    copyElse3List.append(tempInfo)
                         railInfo.append(copyElse3List)
 
                         else4Info = []
@@ -813,3 +820,19 @@ class RailListWidget:
 
             except Exception:
                 mb.showerror(title="エラー", message=errorMsg)
+
+    def csToRs(self):
+        filename = self.decryptFile.filename + "_RS.bin"
+        file_path = fd.asksaveasfilename(initialfile=filename, defaultextension='bin', filetypes=[('RS移植BIN', '*.bin')])
+        if file_path:
+            newByteArr = self.decryptFile.csToRs()
+            if newByteArr is None:
+                self.decryptFile.printError()
+                mb.showerror(title="エラー", message="RS移植ファイル作成失敗しました。\n権限問題の可能性があります。")
+                return
+
+            w = open(file_path, "wb")
+            w.write(newByteArr)
+            w.close()
+
+            mb.showinfo(title="成功", message="RS移植ファイルを作成しました。")
