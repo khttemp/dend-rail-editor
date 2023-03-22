@@ -99,6 +99,8 @@ ddsや駅名標の定義、binファイルのアニメを調整できる
 
 修正するには、自動で作られたCSVを利用して調整する
 
+RSのレール情報の要素についは、[【こちら】](/raildata.md)のリンクを参照
+
 ### 要素３
 
 ![else3](https://github.com/khttemp/dend-rail-editor/blob/main/image/else3.png)
